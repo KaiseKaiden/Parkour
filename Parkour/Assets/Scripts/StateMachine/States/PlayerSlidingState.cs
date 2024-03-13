@@ -8,9 +8,11 @@ public class PlayerSlidingState : State
     float mySlopeMultiplier = 1.001f;
 
     float myEasingValue;
+    bool myCantSlide;
 
     public override void OnEnter()
     {
+        myCantSlide = false;
         myEasingValue = 0.0f;
 
         myStateMachine.SetGroundedYVelocity();
@@ -20,6 +22,7 @@ public class PlayerSlidingState : State
         {
             if (Vector3.Dot(myStateMachine.transform.forward, hit.normal) < 0.0f)
             {
+                myCantSlide = true;
                 myStateMachine.ChangeState(PlayerStateMachine.eStates.Idle);
                 return;
             }
@@ -31,15 +34,26 @@ public class PlayerSlidingState : State
         myStateMachine.SetHeight(0.5f);
 
         myStateMachine.SetSpeedLinesActive(true);
+
+
+        myStateMachine.GetPlayerAnimator().SetTrigger("slide");
     }
 
     public override void OnExit()
     {
+        myStateMachine.SetBodyRotationX(0.0f);
+
         myStateMachine.SetDesiredCameraTilt(0.0f);
         myStateMachine.SetDesiredFOV(90.0f);
 
         myStateMachine.SetSpeedLinesActive(false);
         myStateMachine.AdjustLookRotation();
+
+        // This Stops A Animation Bug From Happening
+        if (!myCantSlide && myStateMachine.IsGrounded() && !Input.GetButton("Jump"))
+        {
+            myStateMachine.GetPlayerAnimator().SetTrigger("slidingStop");
+        }
     }
 
     public override void Tick()
@@ -60,6 +74,9 @@ public class PlayerSlidingState : State
         if (Physics.Raycast(myStateMachine.transform.position + Vector3.up, Vector3.down, out hit, 2.0f, myStateMachine.GetWallLayerMask()))
         {
             float slopeAngle = Vector3.Angle(hit.normal, Vector3.up);
+            //myStateMachine.GetBodyTransform().localEulerAngles = new Vector3(slopeAngle, 0.0f, 0.0f);
+            myStateMachine.SetBodyRotationX(slopeAngle);
+
             if (slopeAngle > 0.0f)
             {
                 Vector3 slopeDirection = Vector3.Cross(Vector3.Cross(Vector3.up, hit.normal), hit.normal).normalized;
@@ -94,14 +111,14 @@ public class PlayerSlidingState : State
         // Transitions
         if (!myStateMachine.IsGrounded())
         {
-            myStateMachine.SetDesiredCameraHeight(2.0f);
+            //myStateMachine.SetDesiredCameraHeight(2.0f);
             myStateMachine.SetHeight(2.0f);
             myStateMachine.ChangeState(PlayerStateMachine.eStates.Falling);
             myStateMachine.SetGroundedYVelocity();
         }
         else if (Input.GetButton("Jump") && slidingDown)
         {
-            myStateMachine.SetDesiredCameraHeight(2.0f);
+            //myStateMachine.SetDesiredCameraHeight(2.0f);
             myStateMachine.SetHeight(2.0f);
             myStateMachine.ChangeState(PlayerStateMachine.eStates.SlopeJump);
         }
@@ -135,7 +152,7 @@ public class PlayerSlidingState : State
             {
                 myStateMachine.ChangeState(PlayerStateMachine.eStates.Idle);
                 myStateMachine.SetHeight(2.0f);
-                myStateMachine.SetDesiredCameraHeight(2.0f);
+                //myStateMachine.SetDesiredCameraHeight(2.0f);
             }
         }
         else

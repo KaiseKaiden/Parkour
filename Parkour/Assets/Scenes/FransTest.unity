@@ -9582,6 +9582,7 @@ MonoBehaviour:
   myAnimator: {fileID: 963194229}
   myPlayerAnimator: {fileID: 295847653}
   myCameraTransform: {fileID: 1529803895}
+  myBodyTransform: {fileID: 295847651}
   myWhatIsGround:
     serializedVersion: 2
     m_Bits: 65

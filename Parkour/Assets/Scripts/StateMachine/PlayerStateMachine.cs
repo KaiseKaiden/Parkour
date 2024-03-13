@@ -53,6 +53,7 @@ public class PlayerStateMachine : Observer
     [Space(10)]
 
     [SerializeField] Transform myCameraTransform;
+    [SerializeField] Transform myBodyTransform;
     [SerializeField] LayerMask myWhatIsGround;
     [SerializeField] LayerMask myWhatIsWall;
     [SerializeField] LayerMask myWhatIsObstacle;
@@ -73,6 +74,7 @@ public class PlayerStateMachine : Observer
     float myCurrentCameraTilt;
     float myDesiredCameraTilt;
     float myScreenShakeIntensity;
+    float myDesiredBodyXrot;
 
     Vector3 mySpawnPosition;
 
@@ -158,6 +160,9 @@ public class PlayerStateMachine : Observer
         // CAM SHAKE
         myScreenShakeIntensity = Mathf.Lerp(myScreenShakeIntensity, 0.0f, Time.deltaTime * 2.5f);
         myCameraTransform.transform.localPosition += transform.right * Random.Range(-myScreenShakeIntensity, myScreenShakeIntensity) + transform.up * Random.Range(-myScreenShakeIntensity, myScreenShakeIntensity);
+        // Body Rot
+        Quaternion rotation = Quaternion.Euler(new Vector3(myDesiredBodyXrot, 0.0f, 0.0f));
+        myBodyTransform.transform.localRotation = Quaternion.Lerp(myBodyTransform.transform.localRotation, rotation, 5.0f * Time.deltaTime);
 
         Respawn();
         GetPlayerAnimator().SetBool("isGrounded", IsGrounded());
@@ -596,6 +601,11 @@ public class PlayerStateMachine : Observer
         intersection.y = ((x1 * y2 - y1 * x2) * (y3 - y4) - (y1 - y2) * (x3 * y4 - y3 * x4)) / denominator;
 
         return true;
+    }
+
+    public void SetBodyRotationX(float aAngle)
+    {
+        myDesiredBodyXrot = aAngle;
     }
 
     public void SetDesiredAngle(Vector3 aDesiredAngle)
