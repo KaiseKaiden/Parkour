@@ -161,7 +161,6 @@ public class PlayerSlidingState : State
             myEasingValue = Mathf.Clamp01(myEasingValue);
 
             myStateMachine.SetHeight(0.5f);
-            myStateMachine.SetCameraHeight(0.5f + myStateMachine.GetAnimationCurves().myCrouchingDownCurve.Evaluate(myEasingValue) * 1.5f);
         }
     }
 }

@@ -14,6 +14,8 @@ public class PlayerHardLanding : State
         myStateMachine.SetScreenShakeIntensity(0.2f);
 
         myStateMachine.CreateLandParticle();
+
+        myStateMachine.GetPlayerAnimator().SetTrigger("hardLand");
     }
 
     public override void OnExit()

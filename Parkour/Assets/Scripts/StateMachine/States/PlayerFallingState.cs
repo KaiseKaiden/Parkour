@@ -28,6 +28,8 @@ public class PlayerFallingState : State
     public override void OnExit()
     {
         myStateMachine.SetSpeedLinesActive(false);
+
+        myStateMachine.GetPlayerAnimator().ResetTrigger("fall");
     }
 
     public override void Tick()

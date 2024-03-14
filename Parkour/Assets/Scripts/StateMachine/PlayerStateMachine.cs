@@ -45,7 +45,6 @@ public class PlayerStateMachine : Observer
 
     public eStates myCurrentStateEnum;
 
-    [SerializeField] Animator myAnimator;
     [SerializeField] Animator myPlayerAnimator;
     CharacterController myCharacterController;
     PlayerAnimationCurves myAnimationCurves;
@@ -155,9 +154,10 @@ public class PlayerStateMachine : Observer
         // FOV
         Camera.main.fieldOfView = Mathf.Lerp(Camera.main.fieldOfView, myDesiredFOV, Time.deltaTime * 3.5f);
         // CAM TILT
-        myCurrentCameraTilt = Mathf.Lerp(myCurrentCameraTilt, myDesiredCameraTilt, Time.deltaTime * 5.0f);
-        myCameraTransform.eulerAngles = new Vector3(myCameraTransform.eulerAngles.x, myCameraTransform.eulerAngles.y, myCurrentCameraTilt);
+        //myCurrentCameraTilt = Mathf.Lerp(myCurrentCameraTilt, myDesiredCameraTilt, Time.deltaTime * 5.0f);
+        //myCameraTransform.eulerAngles = new Vector3(myCameraTransform.eulerAngles.x, myCameraTransform.eulerAngles.y, myCurrentCameraTilt);
         // CAM SHAKE
+        myCameraTransform.transform.localPosition = Vector3.zero;
         myScreenShakeIntensity = Mathf.Lerp(myScreenShakeIntensity, 0.0f, Time.deltaTime * 2.5f);
         myCameraTransform.transform.localPosition += transform.right * Random.Range(-myScreenShakeIntensity, myScreenShakeIntensity) + transform.up * Random.Range(-myScreenShakeIntensity, myScreenShakeIntensity);
         // Body Rot
@@ -261,11 +261,6 @@ public class PlayerStateMachine : Observer
     public bool IsGrounded()
     {
         return Physics.OverlapSphere(transform.position - Vector3.down * 0.1f, GetCharacterController().radius, myWhatIsGround).Length > 0;
-    }
-
-    public Animator GetAnimator()
-    {
-        return myAnimator;
     }
 
     public Animator GetPlayerAnimator()

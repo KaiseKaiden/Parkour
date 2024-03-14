@@ -25,8 +25,9 @@ public class PlayerRollLanding : State
         Vector3 forward = myStateMachine.transform.forward * mySpeed;
         myStateMachine.SetVelocityXYZ(forward.x, -0.5f, forward.z);
 
-        myStateMachine.GetAnimator().SetTrigger("Roll");
-        myStateMachine.SetDesiredCameraTilt(-35.0f);
+        //myStateMachine.GetAnimator().SetTrigger("Roll");
+        //myStateMachine.SetDesiredCameraTilt(-35.0f);
+        myStateMachine.GetPlayerAnimator().SetTrigger("rolling");
 
         myStateMachine.SetHeight(0.5f);
 
@@ -49,8 +50,8 @@ public class PlayerRollLanding : State
     {
         myActiveTime += Time.deltaTime;
 
-        myStateMachine.SetCameraHeight(0.5f + Mathf.Cos(myActiveTime * Mathf.PI) * 1.5f);
-        myStateMachine.SetDesiredCameraTilt((1.0f - myActiveTime) * -35.0f);
+        //myStateMachine.SetCameraHeight(0.5f + Mathf.Cos(myActiveTime * Mathf.PI) * 1.5f);
+        //myStateMachine.SetDesiredCameraTilt((1.0f - myActiveTime) * -35.0f);
 
         if (myActiveTime > 1.0f)
         {
@@ -65,7 +66,6 @@ public class PlayerRollLanding : State
             else
             {
                 myStateMachine.ChangeState(PlayerStateMachine.eStates.Idle);
-                myStateMachine.SetDesiredCameraHeight(2.0f);
                 myStateMachine.SetHeight(2.0f);
             }
         }

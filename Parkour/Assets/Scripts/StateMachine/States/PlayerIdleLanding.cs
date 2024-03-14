@@ -6,9 +6,8 @@ public class PlayerIdleLanding : State
 {
     public override void OnEnter()
     {
+        myStateMachine.GetPlayerAnimator().SetTrigger("land");
         myStateMachine.SetGroundedYVelocity();
-
-        myStateMachine.ChangeState(PlayerStateMachine.eStates.Idle);
 
         myStateMachine.CreateLandParticle();
 
@@ -19,6 +18,8 @@ public class PlayerIdleLanding : State
             myStateMachine.transform.position = hit.point;
             myStateMachine.GetCharacterController().enabled = true;
         }
+
+        myStateMachine.ChangeState(PlayerStateMachine.eStates.Idle);
     }
 
     public override void OnExit()

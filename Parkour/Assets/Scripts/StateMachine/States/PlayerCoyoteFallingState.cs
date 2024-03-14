@@ -30,7 +30,7 @@ public class PlayerCoyoteFallingState : State
 
     public override void OnExit()
     {
-
+        myStateMachine.GetPlayerAnimator().ResetTrigger("fall");
     }
 
     public override void Tick()
