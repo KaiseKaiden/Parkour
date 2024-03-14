@@ -428,6 +428,20 @@ public class PlayerStateMachine : Observer
         return false;
     }
 
+    public bool RaycastSlideForward(out RaycastHit aOutHit)
+    {
+        //Transform trans = myCameraTransform;
+        //trans.eulerAngles = new Vector3(0.0f, trans.eulerAngles.y, 0.0f);
+
+        Vector3 forward = myBodyTransform.forward;
+
+        if (Physics.Raycast(transform.position + (myBodyTransform.up * 0.5f), forward, out aOutHit, 1.0f, GetWallLayerMask()))
+        {
+            return true;
+        }
+
+        return false;
+    }
 
     // EEE
     public bool GetEdgeHit()

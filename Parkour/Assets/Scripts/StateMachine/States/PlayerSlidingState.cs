@@ -136,7 +136,7 @@ public class PlayerSlidingState : State
         {
             myStateMachine.ChangeState(PlayerStateMachine.eStates.Crouch);
         }
-        else if (Input.GetButtonUp("Crouch") || (velocity.magnitude < 2.0f && Vector3.Dot(hit.normal, Vector3.up) == 1.0f))
+        else if (Input.GetButtonUp("Crouch") || (velocity.magnitude < 2.0f && Vector3.Dot(hit.normal, Vector3.up) == 1.0f) || myStateMachine.RaycastSlideForward(out hit))
         {
             myStateMachine.SetSpeedLinesActive(false);
 
