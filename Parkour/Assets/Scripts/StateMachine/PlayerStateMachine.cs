@@ -658,7 +658,7 @@ public class PlayerStateMachine : Observer
     {
         Debug.Log("Attacked");
         RaycastHit hit;
-        if (Physics.SphereCast(transform.position, 0.75f, transform.forward, out hit, 7.5f, myWhatIsEnemy))
+        if (Physics.SphereCast(transform.position - transform.forward * 2.0f, 1.0f, transform.forward, out hit, 3.5f, myWhatIsEnemy))
         {
             hit.transform.root.GetComponent<Enemy>().KickedAt(hit.point, transform.forward * 250.0f);
             myCachedStates[(int)eStates.AirKick].AttackHit();
