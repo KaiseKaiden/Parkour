@@ -64,7 +64,7 @@ public class PlayerWallRunningState : State
 
         if (myStateMachine.GetCharacterController().velocity.y < 0.0f)
         {
-            myStateMachine.ChangeState(PlayerStateMachine.eStates.Falling);
+            myStateMachine.ChangeState(PlayerStateMachine.eStates.WallRunFall);
         }
         else if (myStateMachine.GetEdgeHit())
         {

@@ -28,6 +28,7 @@ public class PlayerStateMachine : Observer
         WallJumpLeft,
         WallTurn,
         WallJump,
+        WallRunFall,
 
         EdgeClimbHead,
         EdgeClimbHipp,
@@ -113,6 +114,7 @@ public class PlayerStateMachine : Observer
         myCachedStates.Add(new PlayerWallJumpToLeft());
         myCachedStates.Add(new PlayerWallTurning());
         myCachedStates.Add(new PlayerWallJump());
+        myCachedStates.Add(new PlayerWallRunningFallingState());
 
         myCachedStates.Add(new PlayerEdgeClimbHeadState());
         myCachedStates.Add(new PlayerEdgeClimbHippState());

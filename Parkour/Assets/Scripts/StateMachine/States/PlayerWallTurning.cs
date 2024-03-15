@@ -43,7 +43,7 @@ public class PlayerWallTurning : State
         }
         else
         {
-            myStateMachine.ChangeState(PlayerStateMachine.eStates.Falling);
+            myStateMachine.ChangeState(PlayerStateMachine.eStates.WallRunFall);
         }
     }
 
