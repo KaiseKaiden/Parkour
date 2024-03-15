@@ -77,7 +77,11 @@ public class PlayerFallingState : State
         }
         else
         {
-            if (myStateMachine.GetCurrentVelocity().y > -10.0f && !Input.GetButton("Crouch"))
+            if (Input.GetButtonDown("Attack"))
+            {
+                myStateMachine.ChangeState(PlayerStateMachine.eStates.AirKick);
+            }
+            else if (myStateMachine.GetCurrentVelocity().y > -10.0f && !Input.GetButton("Crouch"))
             {
                 RaycastHit hit;
                 if (myStateMachine.WallRunnLeftTransition() && !Input.GetButton("Crouch") && myCanWallRun)

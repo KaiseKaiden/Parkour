@@ -40,7 +40,11 @@ public class PlayerJumpState : State
         Vector2 input = myStateMachine.GetInput();
 
         RaycastHit hit;
-        if (myStateMachine.GetEdgeHit())
+        if (Input.GetButtonDown("Attack"))
+        {
+            myStateMachine.ChangeState(PlayerStateMachine.eStates.AirKick);
+        }
+        else if (myStateMachine.GetEdgeHit())
         {
             myStateMachine.ChangeState(PlayerStateMachine.eStates.LedgeClimb);
         }

@@ -25,4 +25,14 @@ public class State
     {
 
     }
+
+    public virtual void AttackDone()
+    {
+
+    }
+
+    public virtual void AttackHit()
+    {
+
+    }
 }

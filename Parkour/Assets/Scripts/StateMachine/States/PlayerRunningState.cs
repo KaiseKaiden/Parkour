@@ -20,6 +20,8 @@ public class PlayerRunningState : State
         myStateMachine.SetGroundedYVelocity();
         myStateMachine.SetDesiredCameraTilt(0.0f);
         //myStateMachine.SetDesiredCameraHeight(2.0f);
+
+        myStateMachine.GetPlayerAnimator().SetFloat("speed", 0.0f);
     }
 
     public override void Tick()

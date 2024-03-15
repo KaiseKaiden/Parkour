@@ -36,6 +36,8 @@ public class PlayerStateMachine : Observer
         StepClimb,
 
         LedgeClimb,
+        AirKick,
+        KickBoost,
 
         Count
     }
@@ -53,9 +55,11 @@ public class PlayerStateMachine : Observer
 
     [SerializeField] Transform myCameraTransform;
     [SerializeField] Transform myBodyTransform;
+    [SerializeField] Transform myKickTransform;
     [SerializeField] LayerMask myWhatIsGround;
     [SerializeField] LayerMask myWhatIsWall;
     [SerializeField] LayerMask myWhatIsObstacle;
+    [SerializeField] LayerMask myWhatIsEnemy;
 
     public Vector3 myVelocity;
     Vector3 myStaticCameraEuler;
@@ -117,6 +121,8 @@ public class PlayerStateMachine : Observer
         myCachedStates.Add(new PlayerStepClimbState());
 
         myCachedStates.Add(new PlayerLedgeClimbState());
+        myCachedStates.Add(new PlayerAirKick());
+        myCachedStates.Add(new PlayerKickBoost());
 
         for (int i = 0; i < myCachedStates.Count; i++)
         {
@@ -159,7 +165,7 @@ public class PlayerStateMachine : Observer
         // CAM SHAKE
         myCameraTransform.transform.localPosition = Vector3.zero;
         myScreenShakeIntensity = Mathf.Lerp(myScreenShakeIntensity, 0.0f, Time.deltaTime * 2.5f);
-        myCameraTransform.transform.localPosition += transform.right * Random.Range(-myScreenShakeIntensity, myScreenShakeIntensity) + transform.up * Random.Range(-myScreenShakeIntensity, myScreenShakeIntensity);
+        if (Time.timeScale > 0.0f) myCameraTransform.transform.localPosition += transform.right * Random.Range(-myScreenShakeIntensity, myScreenShakeIntensity) + transform.up * Random.Range(-myScreenShakeIntensity, myScreenShakeIntensity);
         // Body Rot
         Quaternion rotation = Quaternion.Euler(new Vector3(myDesiredBodyXrot, 0.0f, 0.0f));
         myBodyTransform.transform.localRotation = Quaternion.Lerp(myBodyTransform.transform.localRotation, rotation, 5.0f * Time.deltaTime);
@@ -215,6 +221,11 @@ public class PlayerStateMachine : Observer
         if (myCurrentState != null) myCurrentState.OnExit();
         myCurrentState = myCachedStates[(int)aState];
         myCurrentState.OnEnter();
+    }
+
+    public eStates GetCurrentState()
+    {
+        return myCurrentStateEnum;
     }
 
     float myLookRotY = 0.0f;
@@ -435,7 +446,7 @@ public class PlayerStateMachine : Observer
 
         Vector3 forward = myBodyTransform.forward;
 
-        if (Physics.Raycast(transform.position + (myBodyTransform.up * 0.5f), forward, out aOutHit, 1.0f, GetWallLayerMask()))
+        if (Physics.Raycast(transform.position + (myBodyTransform.up * 0.5f), forward, out aOutHit, 1.0f, myWhatIsGround))
         {
             return true;
         }
@@ -521,6 +532,11 @@ public class PlayerStateMachine : Observer
 
         float scalar = myCurrentHeight * 0.5f;
         myCameraTransform.localPosition = myStartLocalCameraPosition * scalar;
+    }
+
+    public Transform GetCameraTransform()
+    {
+        return myCameraTransform;
     }
 
     public void SetHeight(float aHeight)
@@ -636,5 +652,21 @@ public class PlayerStateMachine : Observer
     {
         var emission = mySpeedLinesParticleSystem.emission;
         emission.enabled = aBool;
+    }
+
+    public void Attacked()
+    {
+        Debug.Log("Attacked");
+        RaycastHit hit;
+        if (Physics.SphereCast(transform.position, 0.75f, transform.forward, out hit, 7.5f, myWhatIsEnemy))
+        {
+            hit.transform.root.GetComponent<Enemy>().KickedAt(hit.point, transform.forward * 250.0f);
+            myCachedStates[(int)eStates.AirKick].AttackHit();
+        }
+    }
+
+    public void AttackDone()
+    {
+        myCachedStates[(int)eStates.AirKick].AttackDone();
     }
 }

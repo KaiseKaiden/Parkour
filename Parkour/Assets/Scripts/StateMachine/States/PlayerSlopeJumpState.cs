@@ -38,7 +38,11 @@ public class PlayerSlopeJumpState : State
 
         // Transitions
         RaycastHit hit;
-        if (myStateMachine.GetEdgeHit())
+        if (Input.GetButtonDown("Attack"))
+        {
+            myStateMachine.ChangeState(PlayerStateMachine.eStates.AirKick);
+        }
+        else if (myStateMachine.GetEdgeHit())
         {
             myStateMachine.ChangeState(PlayerStateMachine.eStates.LedgeClimb);
         }

@@ -5,12 +5,28 @@ using UnityEngine;
 public class Enemy : MonoBehaviour
 {
     [SerializeField] Animator myAnimator;
+    Rigidbody[] myRigidbodies;
 
-    void Update()
+    private void Start()
     {
-        if (Input.GetMouseButtonDown(0))
+        myRigidbodies = GetComponentsInChildren<Rigidbody>();
+    }
+
+    private void Update()
+    {
+        if (Input.GetMouseButtonDown(1))
         {
-            myAnimator.enabled = !myAnimator.enabled;
+            myAnimator.enabled = true;
+        }
+    }
+
+    public void KickedAt(Vector3 aPoint, Vector3 aForce)
+    {
+        myAnimator.enabled = false;
+
+        foreach(Rigidbody r in myRigidbodies)
+        {
+            r.AddForceAtPosition(aForce, aPoint);
         }
     }
 }
