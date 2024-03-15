@@ -21,13 +21,15 @@ public class PlayerAirKick : State
 
         myHitFreezeTime = 0.0f;
         myHasHit = false;
+
+        myStateMachine.SetSpeedLinesActive(true);
     }
 
     public override void OnExit()
     {
-        myStateMachine.SetBodyRotationX(0.0f);
-
         myStateMachine.AdjustLookRotation();
+
+        myStateMachine.SetSpeedLinesActive(false);
     }
 
     public override void Tick()

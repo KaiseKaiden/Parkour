@@ -20,11 +20,13 @@ public class PlayerKickBoost : State
         myCurrentXZForce.y = myStateMachine.GetCurrentVelocityXZ().z;
 
         myStateMachine.GetPlayerAnimator().SetTrigger("jump");
+
+        myStateMachine.SetSpeedLinesActive(true);
     }
 
     public override void OnExit()
     {
-
+        myStateMachine.SetSpeedLinesActive(false);
     }
 
     public override void Tick()
