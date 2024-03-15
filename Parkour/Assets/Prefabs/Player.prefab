@@ -4879,7 +4879,7 @@ MonoBehaviour:
   myPlayerAnimator: {fileID: 1532315677724504812}
   myCameraTransform: {fileID: 8834993677486349397}
   myBodyTransform: {fileID: 7530647954650227546}
-  myKickTransform: {fileID: 0}
+  myKickTransform: {fileID: 474375443916083187}
   myWhatIsGround:
     serializedVersion: 2
     m_Bits: 65
@@ -10827,6 +10827,11 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 2335607184583116515}
   m_SourcePrefab: {fileID: 100100000, guid: f3c3d8b67e299dd409c4d3d4c7c66e0b, type: 3}
+--- !u!4 &474375443916083187 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 7610473024919620418, guid: f3c3d8b67e299dd409c4d3d4c7c66e0b, type: 3}
+  m_PrefabInstance: {fileID: 8000791072253904049}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &4132440201696211600 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 6220004825588495905, guid: f3c3d8b67e299dd409c4d3d4c7c66e0b, type: 3}
