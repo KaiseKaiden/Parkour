@@ -14,8 +14,11 @@ public class PlayerRollLanding : State
         {
             if (Vector3.Dot(Vector3.up, hit.normal) < 0.95f)
             {
-                myStateMachine.ChangeState(PlayerStateMachine.eStates.Slide);
-                return;
+                if (Vector3.Dot(myStateMachine.transform.forward, hit.normal) >= 0.0f)
+                {
+                    myStateMachine.ChangeState(PlayerStateMachine.eStates.Slide);
+                    return;
+                }
             }
         }
 
@@ -25,8 +28,6 @@ public class PlayerRollLanding : State
         Vector3 forward = myStateMachine.transform.forward * mySpeed;
         myStateMachine.SetVelocityXYZ(forward.x, -0.5f, forward.z);
 
-        //myStateMachine.GetAnimator().SetTrigger("Roll");
-        //myStateMachine.SetDesiredCameraTilt(-35.0f);
         myStateMachine.GetPlayerAnimator().SetTrigger("rolling");
 
         myStateMachine.SetHeight(0.5f);
@@ -49,9 +50,6 @@ public class PlayerRollLanding : State
     void Land()
     {
         myActiveTime += Time.deltaTime;
-
-        //myStateMachine.SetCameraHeight(0.5f + Mathf.Cos(myActiveTime * Mathf.PI) * 1.5f);
-        //myStateMachine.SetDesiredCameraTilt((1.0f - myActiveTime) * -35.0f);
 
         if (myActiveTime > 1.0f)
         {
