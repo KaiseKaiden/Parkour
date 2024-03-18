@@ -9,7 +9,13 @@ public class PlayerRollLanding : State
 
     public override void OnEnter()
     {
-        RaycastHit hit;
+        if (myStateMachine.GroundIsSlippy())
+        {
+            myStateMachine.ChangeState(PlayerStateMachine.eStates.Slide);
+            return;
+        }
+
+            RaycastHit hit;
         if (Physics.Raycast(myStateMachine.transform.position + Vector3.up, Vector3.down, out hit, 2.0f, myStateMachine.GetWallLayerMask()))
         {
             if (Vector3.Dot(Vector3.up, hit.normal) < 0.95f)

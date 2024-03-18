@@ -63,6 +63,7 @@ public class PlayerStateMachine : Observer
     [SerializeField] LayerMask myWhatIsWall;
     [SerializeField] LayerMask myWhatIsObstacle;
     [SerializeField] LayerMask myWhatIsEnemy;
+    [SerializeField] LayerMask myWhatIsSlippy;
 
     public Vector3 myVelocity;
     Vector3 myStaticCameraEuler;
@@ -456,7 +457,7 @@ public class PlayerStateMachine : Observer
 
         Vector3 forward = myBodyTransform.forward;
 
-        if (Physics.Raycast(transform.position + (myBodyTransform.up * 0.5f), forward, out aOutHit, 1.0f, myWhatIsGround))
+        if (Physics.SphereCast(transform.position + (myBodyTransform.up * 0.5f), GetCharacterController().radius * 0.15f, forward, out aOutHit, 1.0f, myWhatIsGround))
         {
             return true;
         }
@@ -636,6 +637,11 @@ public class PlayerStateMachine : Observer
         intersection.y = ((x1 * y2 - y1 * x2) * (y3 - y4) - (y1 - y2) * (x3 * y4 - y3 * x4)) / denominator;
 
         return true;
+    }
+
+    public bool GroundIsSlippy()
+    {
+        return Physics.OverlapSphere(transform.position - Vector3.down * 0.1f, GetCharacterController().radius, myWhatIsSlippy).Length > 0;
     }
 
     public void SetBodyRotationX(float aAngle)

@@ -106,7 +106,7 @@ public class PlayerAirKick : State
             else
             {
                 myStateMachine.ChangeState(PlayerStateMachine.eStates.Falling);
-                Vector3 direction = (myEnemyTarget.transform.position - myStartPosition);
+                Vector3 direction = ((myEnemyTarget.transform.position + Vector3.up) - myStartPosition);
                 myStateMachine.SetVelocityY(direction.y);
             }
         }

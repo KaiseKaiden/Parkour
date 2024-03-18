@@ -84,6 +84,10 @@ public class PlayerFallingState : State
             {
                 myStateMachine.ChangeState(PlayerStateMachine.eStates.AirKick);
             }
+            else if (myStateMachine.GroundIsSlippy())
+            {
+                myStateMachine.ChangeState(PlayerStateMachine.eStates.Slide);
+            }
             else if (myStateMachine.GetCurrentVelocity().y > -10.0f && !Input.GetButton("Crouch"))
             {
                 RaycastHit hit;

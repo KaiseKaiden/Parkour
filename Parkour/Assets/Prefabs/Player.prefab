@@ -4885,13 +4885,16 @@ MonoBehaviour:
     m_Bits: 65
   myWhatIsWall:
     serializedVersion: 2
-    m_Bits: 1
+    m_Bits: 4097
   myWhatIsObstacle:
     serializedVersion: 2
     m_Bits: 64
   myWhatIsEnemy:
     serializedVersion: 2
     m_Bits: 256
+  myWhatIsSlippy:
+    serializedVersion: 2
+    m_Bits: 4096
   myVelocity: {x: 0, y: 0, z: 0}
   myLandParticle: {fileID: 1449434651020079472, guid: bae3bdebc4a0893469084b27f7698954, type: 3}
   mySpeedLinesParticleSystem: {fileID: 418006699277026148}
@@ -5153,7 +5156,7 @@ Camera:
   m_Depth: 0
   m_CullingMask:
     serializedVersion: 2
-    m_Bits: 383
+    m_Bits: 4479
   m_RenderingPath: -1
   m_TargetTexture: {fileID: 0}
   m_TargetDisplay: 0
@@ -10876,7 +10879,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   myStateMachine: {fileID: 7706059960309531277}
-  myKickAttackBox: {fileID: 0}
 --- !u!4 &7530647954650227546 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: f3c3d8b67e299dd409c4d3d4c7c66e0b, type: 3}
