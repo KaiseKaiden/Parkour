@@ -53,6 +53,7 @@ public class PlayerSlidingState : State
         if (!myCantSlide && myStateMachine.IsGrounded() && !Input.GetButton("Jump"))
         {
             myStateMachine.GetPlayerAnimator().SetTrigger("slidingStop");
+            myStateMachine.SetVelocityXYZ(0.0f, -0.5f, 0.0f);
         }
     }
 
@@ -109,7 +110,7 @@ public class PlayerSlidingState : State
         myStateMachine.GravityTick();
 
         // Transitions
-        if (!myStateMachine.IsGrounded())
+        if (!myStateMachine.IsGrounded() && !myStateMachine.GroundIsSlippy())
         {
             //myStateMachine.SetDesiredCameraHeight(2.0f);
             myStateMachine.SetHeight(2.0f);
@@ -132,18 +133,18 @@ public class PlayerSlidingState : State
         RaycastHit hit;
         Physics.Raycast(myStateMachine.transform.position + Vector3.up, Vector3.down, out hit, 2.0f, myStateMachine.GetWallLayerMask());
 
-        if (Input.GetButton("Crouch") && (velocity.magnitude < 2.0f && Vector3.Dot(hit.normal, Vector3.up) == 1.0f))
+        if (Input.GetButton("Crouch") && (velocity.magnitude < 2.0f && Vector3.Dot(hit.normal, Vector3.up) == 1.0f) && !myStateMachine.GroundIsSlippy())
         {
             myStateMachine.ChangeState(PlayerStateMachine.eStates.Crouch);
         }
-        else if (Input.GetButtonUp("Crouch") || (velocity.magnitude < 2.0f && Vector3.Dot(hit.normal, Vector3.up) == 1.0f) || myStateMachine.RaycastSlideForward(out hit))
+        else if ((!Input.GetButton("Crouch") && !myStateMachine.GroundIsSlippy()) || (velocity.magnitude < 2.0f && Vector3.Dot(hit.normal, Vector3.up) == 1.0f && !myStateMachine.GroundIsSlippy()) || myStateMachine.RaycastSlideForward(out hit))
         {
             myStateMachine.SetSpeedLinesActive(false);
 
             myStateMachine.SetDesiredCameraTilt(0.0f);
             myStateMachine.SetDesiredFOV(90.0f);
 
-            if (Physics.Raycast(myStateMachine.transform.position + Vector3.one * 0.3f, Vector3.up, 1.7f, myStateMachine.GetWallLayerMask()))
+            if (Physics.Raycast(myStateMachine.transform.position + Vector3.up * 0.3f, Vector3.up, 1.7f, myStateMachine.GetWallLayerMask()))
             {
                 myStateMachine.SetHeight(0.5f);
                 myStateMachine.ChangeState(PlayerStateMachine.eStates.Crouch);

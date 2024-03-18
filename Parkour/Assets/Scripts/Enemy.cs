@@ -29,4 +29,9 @@ public class Enemy : MonoBehaviour
             r.AddForceAtPosition(aForce, aPoint);
         }
     }
+
+    public bool IsAlive()
+    {
+        return myAnimator.enabled;
+    }
 }

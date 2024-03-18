@@ -50,10 +50,17 @@ public class PlayerWallJump : State
         myStateMachine.GravityTick();
 
         // Transitions
+        GameObject obj;
+        myStateMachine.EnemyIsInRange(out obj);
+
         RaycastHit hit;
         if (myStateMachine.GetEdgeHit())
         {
             myStateMachine.ChangeState(PlayerStateMachine.eStates.LedgeClimb);
+        }
+        else if (Input.GetButtonDown("Attack") && myStateMachine.CanKick())
+        {
+            myStateMachine.ChangeState(PlayerStateMachine.eStates.AirKick);
         }
         else if (myStateMachine.RaycastForward(out hit))
         {

@@ -37,8 +37,11 @@ public class PlayerSlopeJumpState : State
         myStateMachine.GravityTick();
 
         // Transitions
+        GameObject obj;
+        myStateMachine.EnemyIsInRange(out obj);
+
         RaycastHit hit;
-        if (Input.GetButtonDown("Attack"))
+        if (Input.GetButtonDown("Attack") && myStateMachine.CanKick())
         {
             myStateMachine.ChangeState(PlayerStateMachine.eStates.AirKick);
         }

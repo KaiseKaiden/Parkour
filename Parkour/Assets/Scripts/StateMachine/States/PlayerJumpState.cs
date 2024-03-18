@@ -39,8 +39,11 @@ public class PlayerJumpState : State
         // Transitions
         Vector2 input = myStateMachine.GetInput();
 
+        GameObject obj;
+        myStateMachine.EnemyIsInRange(out obj);
+
         RaycastHit hit;
-        if (Input.GetButtonDown("Attack"))
+        if (Input.GetButtonDown("Attack") && myStateMachine.CanKick())
         {
             myStateMachine.ChangeState(PlayerStateMachine.eStates.AirKick);
         }

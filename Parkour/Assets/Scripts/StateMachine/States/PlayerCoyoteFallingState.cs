@@ -62,7 +62,7 @@ public class PlayerCoyoteFallingState : State
             }
             else
             {
-                if (Input.GetButton("Crouch"))
+                if (Input.GetButton("Crouch") || myStateMachine.GroundIsSlippy())
                 {
                     myStateMachine.ChangeState(PlayerStateMachine.eStates.Slide);
                 }

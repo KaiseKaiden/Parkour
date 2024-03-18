@@ -7,6 +7,8 @@ public class PlayerStateMachine : Observer
     const float myGravity = 10.0f;
     const float myMaxVaultDistance = 4.5f;
 
+    bool myCanKick = false;
+
     public enum eStates : int
     {
         Idle,
@@ -61,6 +63,7 @@ public class PlayerStateMachine : Observer
     [SerializeField] LayerMask myWhatIsWall;
     [SerializeField] LayerMask myWhatIsObstacle;
     [SerializeField] LayerMask myWhatIsEnemy;
+    [SerializeField] LayerMask myWhatIsSlippy;
 
     public Vector3 myVelocity;
     Vector3 myStaticCameraEuler;
@@ -144,6 +147,12 @@ public class PlayerStateMachine : Observer
 
     void Update()
     {
+        ResetEnemyOutline();
+        if (!myCanKick) // Reset Kick
+        {
+            myCanKick = IsGrounded();
+        }
+
         if (myCurrentState != null) myCurrentState.Tick();
 
         // Locomotion
@@ -448,7 +457,7 @@ public class PlayerStateMachine : Observer
 
         Vector3 forward = myBodyTransform.forward;
 
-        if (Physics.Raycast(transform.position + (myBodyTransform.up * 0.5f), forward, out aOutHit, 1.0f, myWhatIsGround))
+        if (Physics.SphereCast(transform.position + (myBodyTransform.up * 0.5f), GetCharacterController().radius * 0.15f, forward, out aOutHit, 1.0f, myWhatIsGround))
         {
             return true;
         }
@@ -630,6 +639,11 @@ public class PlayerStateMachine : Observer
         return true;
     }
 
+    public bool GroundIsSlippy()
+    {
+        return Physics.OverlapSphere(transform.position - Vector3.down * 0.1f, GetCharacterController().radius, myWhatIsSlippy).Length > 0;
+    }
+
     public void SetBodyRotationX(float aAngle)
     {
         myDesiredBodyXrot = aAngle;
@@ -658,17 +672,82 @@ public class PlayerStateMachine : Observer
 
     public void Attacked()
     {
+        myCachedStates[(int)eStates.AirKick].AttackHit();
         Debug.Log("Attacked");
-        RaycastHit hit;
+        /*RaycastHit hit;
         if (Physics.SphereCast(transform.position - transform.forward * 2.0f, 1.75f, transform.forward, out hit, 3.5f, myWhatIsEnemy))
         {
             hit.transform.root.GetComponent<Enemy>().KickedAt(hit.point, transform.forward * 250.0f);
             myCachedStates[(int)eStates.AirKick].AttackHit();
         }
+        else myCanKick = false;*/
     }
 
     public void AttackDone()
     {
         myCachedStates[(int)eStates.AirKick].AttackDone();
+    }
+
+    public bool CanKick()
+    {
+        return myCanKick;
+    }
+
+    void ResetEnemyOutline()
+    {
+        GameObject[] enemies = GameObject.FindGameObjectsWithTag("Enemy");
+        foreach (GameObject e in enemies)
+        {
+            e.GetComponent<Outline>().enabled = false;
+        }
+    }
+
+    public bool EnemyIsInRange(out GameObject aGameObject)
+    {
+        GameObject[] enemies = GameObject.FindGameObjectsWithTag("Enemy");
+
+        const float range = 7.5f;
+
+        float closestRange = range;
+        float bestDirection = 0.2f;
+
+        GameObject closestEnemie = null;
+
+        foreach(GameObject e in enemies)
+        {
+            if (!e.GetComponent<Enemy>().IsAlive())
+            {
+                continue;
+            }
+
+            Vector3 direction = ((e.transform.position + Vector3.up) - transform.position);
+            if (direction.magnitude < range)
+            {
+                if (!Physics.Linecast(GetCameraTransform().position, e.transform.position + Vector3.up, myWhatIsGround))
+                {
+                    if (direction.magnitude < closestRange)
+                    {
+                        //closestRange = direction.magnitude;
+
+                        if (Vector3.Dot(direction.normalized, GetCameraTransform().forward) > bestDirection)
+                        {
+                            bestDirection = Vector3.Dot(direction.normalized, GetCameraTransform().forward);
+                            closestEnemie = e;
+                        }
+                    }
+                }
+            }
+        }
+
+        if (closestEnemie != null)
+        {
+            closestEnemie.GetComponent<Outline>().enabled = true;
+            aGameObject = closestEnemie;
+
+            return true;
+        }
+
+        aGameObject = null;
+        return false;
     }
 }
