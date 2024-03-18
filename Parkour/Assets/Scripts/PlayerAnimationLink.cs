@@ -5,7 +5,6 @@ using UnityEngine;
 public class PlayerAnimationLink : MonoBehaviour
 {
     [SerializeField] PlayerStateMachine myStateMachine;
-    [SerializeField] BoxCollider myKickAttackBox;
 
     public void AirKick()
     {

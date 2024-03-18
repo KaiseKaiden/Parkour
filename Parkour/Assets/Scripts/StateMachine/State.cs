@@ -31,8 +31,8 @@ public class State
 
     }
 
-    public virtual void AttackHit()
+    public virtual bool AttackHit()
     {
-
+        return false;
     }
 }

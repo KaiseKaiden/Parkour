@@ -71,9 +71,16 @@ public class PlayerRunningState : State
     {
         Vector2 input = myStateMachine.GetInput();
 
+        GameObject obj;
+        myStateMachine.EnemyIsInRange(out obj);
+
         if (!myStateMachine.IsGrounded())
         {
             myStateMachine.ChangeState(PlayerStateMachine.eStates.CayoteFalling);
+        }
+        else if (Input.GetButtonDown("Attack") && myStateMachine.CanKick())
+        {
+            myStateMachine.ChangeState(PlayerStateMachine.eStates.AirKick);
         }
         else if (Input.GetButtonDown("Jump"))
         {

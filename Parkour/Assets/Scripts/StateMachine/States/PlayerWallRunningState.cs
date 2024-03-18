@@ -29,6 +29,8 @@ public class PlayerWallRunningState : State
 
             myVelocity = myUpDirection * myClimbingSpeed;
             myStateMachine.SetVelocityXYZ(myVelocity.x, myVelocity.y, myVelocity.z);
+
+            myStateMachine.GetPlayerAnimator().SetTrigger("verticalWallRun");
         }
 
         myActiveTime = 0.0f;

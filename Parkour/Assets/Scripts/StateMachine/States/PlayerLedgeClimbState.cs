@@ -23,6 +23,8 @@ public class PlayerLedgeClimbState : State
 
         myDiffernce = myDesiredPos - myStartPos;
         myTime = 0.0f;
+
+        myStateMachine.GetPlayerAnimator().SetTrigger("verticalClimb");
     }
 
     public override void OnExit()
