@@ -20,21 +20,23 @@ public class PlayerSlidingState : State
         RaycastHit hit;
         if (Physics.Raycast(myStateMachine.transform.position + Vector3.up, Vector3.down, out hit, 2.0f, myStateMachine.GetWallLayerMask()))
         {
-            if (Vector3.Dot(myStateMachine.transform.forward, hit.normal) < 0.0f)
+            if (hit.transform.gameObject.layer != myStateMachine.GetSlippyLayerMask())
             {
-                myCantSlide = true;
-                myStateMachine.ChangeState(PlayerStateMachine.eStates.Idle);
-                return;
+                if (Vector3.Dot(myStateMachine.transform.forward, hit.normal) < 0.0f)
+                {
+                    myCantSlide = true;
+                    myStateMachine.ChangeState(PlayerStateMachine.eStates.Idle);
+                    return;
+                }
             }
+
+            myStateMachine.GetCharacterController().enabled = false;
+            myStateMachine.transform.position = hit.point;
+            myStateMachine.GetCharacterController().enabled = true;
         }
 
-        myStateMachine.SetDesiredCameraTilt(5.0f);
         myStateMachine.SetDesiredFOV(100.0f);
-
-        myStateMachine.SetHeight(0.5f);
-
         myStateMachine.SetSpeedLinesActive(true);
-
 
         myStateMachine.GetPlayerAnimator().SetTrigger("slide");
     }
@@ -43,7 +45,6 @@ public class PlayerSlidingState : State
     {
         myStateMachine.SetBodyRotationX(0.0f);
 
-        myStateMachine.SetDesiredCameraTilt(0.0f);
         myStateMachine.SetDesiredFOV(90.0f);
 
         myStateMachine.SetSpeedLinesActive(false);
@@ -53,7 +54,8 @@ public class PlayerSlidingState : State
         if (!myCantSlide && myStateMachine.IsGrounded() && !Input.GetButton("Jump"))
         {
             myStateMachine.GetPlayerAnimator().SetTrigger("slidingStop");
-            myStateMachine.SetVelocityXYZ(0.0f, -0.5f, 0.0f);
+            //myStateMachine.SetVelocityXYZ(0.0f, -0.5f, 0.0f);
+            myStateMachine.SetGroundedYVelocity();
         }
     }
 
@@ -72,6 +74,7 @@ public class PlayerSlidingState : State
         Vector3 controlledVelocity = new Vector3();
         bool slidingDown = false;
         RaycastHit hit;
+        //if (Physics.SphereCast(myStateMachine.transform.position + Vector3.up * 1.5f, myStateMachine.GetCharacterController().radius, Vector3.down, out hit, 2.0f, myStateMachine.GetWallLayerMask()))
         if (Physics.Raycast(myStateMachine.transform.position + Vector3.up, Vector3.down, out hit, 2.0f, myStateMachine.GetWallLayerMask()))
         {
             float slopeAngle = Vector3.Angle(hit.normal, Vector3.up);
@@ -112,15 +115,11 @@ public class PlayerSlidingState : State
         // Transitions
         if (!myStateMachine.IsGrounded() && !myStateMachine.GroundIsSlippy())
         {
-            //myStateMachine.SetDesiredCameraHeight(2.0f);
-            myStateMachine.SetHeight(2.0f);
             myStateMachine.ChangeState(PlayerStateMachine.eStates.Falling);
             myStateMachine.SetGroundedYVelocity();
         }
         else if (Input.GetButton("Jump") && slidingDown)
         {
-            //myStateMachine.SetDesiredCameraHeight(2.0f);
-            myStateMachine.SetHeight(2.0f);
             myStateMachine.ChangeState(PlayerStateMachine.eStates.SlopeJump);
         }
     }
@@ -131,37 +130,17 @@ public class PlayerSlidingState : State
         velocity.y = 0.0f;
 
         RaycastHit hit;
-        Physics.Raycast(myStateMachine.transform.position + Vector3.up, Vector3.down, out hit, 2.0f, myStateMachine.GetWallLayerMask());
+        Physics.SphereCast(myStateMachine.transform.position + Vector3.up, myStateMachine.GetCharacterController().radius, Vector3.down, out hit, 2.0f, myStateMachine.GetWallLayerMask());
 
-        if (Input.GetButton("Crouch") && (velocity.magnitude < 2.0f && Vector3.Dot(hit.normal, Vector3.up) == 1.0f) && !myStateMachine.GroundIsSlippy())
-        {
-            myStateMachine.ChangeState(PlayerStateMachine.eStates.Crouch);
-        }
-        else if ((!Input.GetButton("Crouch") && !myStateMachine.GroundIsSlippy()) || (velocity.magnitude < 2.0f && Vector3.Dot(hit.normal, Vector3.up) == 1.0f && !myStateMachine.GroundIsSlippy()) || myStateMachine.RaycastSlideForward(out hit))
+        if ((!Input.GetButton("Crouch") && !myStateMachine.GroundIsSlippy()) || 
+            (velocity.magnitude < 1.0f && Vector3.Dot(hit.normal, Vector3.up) == 1.0f && !myStateMachine.GroundIsSlippy()) || 
+            (myStateMachine.RaycastSlideForward(out hit) && !myStateMachine.GroundIsSlippy()))
         {
             myStateMachine.SetSpeedLinesActive(false);
-
-            myStateMachine.SetDesiredCameraTilt(0.0f);
             myStateMachine.SetDesiredFOV(90.0f);
 
-            if (Physics.Raycast(myStateMachine.transform.position + Vector3.up * 0.3f, Vector3.up, 1.7f, myStateMachine.GetWallLayerMask()))
-            {
-                myStateMachine.SetHeight(0.5f);
-                myStateMachine.ChangeState(PlayerStateMachine.eStates.Crouch);
-            }
-            else
-            {
-                myStateMachine.ChangeState(PlayerStateMachine.eStates.Idle);
-                myStateMachine.SetHeight(2.0f);
-                //myStateMachine.SetDesiredCameraHeight(2.0f);
-            }
-        }
-        else
-        {
-            myEasingValue += Time.deltaTime * 2.0f;
-            myEasingValue = Mathf.Clamp01(myEasingValue);
-
-            myStateMachine.SetHeight(0.5f);
+            myStateMachine.ChangeState(PlayerStateMachine.eStates.Idle);
+            myStateMachine.SetHeight(2.0f);
         }
     }
 }

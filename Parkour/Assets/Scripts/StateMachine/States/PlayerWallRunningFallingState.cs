@@ -52,7 +52,11 @@ public class PlayerWallRunningFallingState : State
         // Transitions
         if (myStateMachine.IsGrounded())
         {
-            if (myStateMachine.GetCurrentVelocity().y < -10.0f)
+            if (myStateMachine.GroundIsSlippy())
+            {
+                myStateMachine.ChangeState(PlayerStateMachine.eStates.Slide);
+            }
+            else if (myStateMachine.GetCurrentVelocity().y < -10.0f)
             {
                 if (Input.GetButton("Crouch"))
                 {

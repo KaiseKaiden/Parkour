@@ -26,7 +26,10 @@ public class PlayerIdleState : State
     public override void Tick()
     {
         myStateMachine.LookAround();
-        myStateMachine.GravityTick();
+        if (!myStateMachine.IsGrounded())
+        {
+            myStateMachine.GravityTick();
+        }
 
         Vector2 input = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
 
@@ -39,13 +42,13 @@ public class PlayerIdleState : State
         GameObject obj;
         myStateMachine.EnemyIsInRange(out obj);
 
-        if (!myStateMachine.IsGrounded())
-        {
-            myStateMachine.ChangeState(PlayerStateMachine.eStates.CayoteFalling);
-        }
-        else if (myStateMachine.GroundIsSlippy())
+        if (myStateMachine.GroundIsSlippy())
         {
             myStateMachine.ChangeState(PlayerStateMachine.eStates.Slide);
+        }
+        else if (!myStateMachine.IsGrounded())
+        {
+            myStateMachine.ChangeState(PlayerStateMachine.eStates.CayoteFalling);
         }
         else if (Input.GetButtonDown("Attack") && myStateMachine.CanKick())
         {

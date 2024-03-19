@@ -47,6 +47,10 @@ public class PlayerJumpState : State
         {
             myStateMachine.ChangeState(PlayerStateMachine.eStates.AirKick);
         }
+        else if (myStateMachine.GroundIsSlippy())
+        {
+            myStateMachine.ChangeState(PlayerStateMachine.eStates.Slide);
+        }
         else if (myStateMachine.GetEdgeHit())
         {
             myStateMachine.ChangeState(PlayerStateMachine.eStates.LedgeClimb);

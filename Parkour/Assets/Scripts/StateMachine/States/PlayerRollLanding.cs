@@ -15,7 +15,7 @@ public class PlayerRollLanding : State
             return;
         }
 
-            RaycastHit hit;
+        RaycastHit hit;
         if (Physics.Raycast(myStateMachine.transform.position + Vector3.up, Vector3.down, out hit, 2.0f, myStateMachine.GetWallLayerMask()))
         {
             if (Vector3.Dot(Vector3.up, hit.normal) < 0.95f)
@@ -48,7 +48,10 @@ public class PlayerRollLanding : State
 
     public override void Tick()
     {
-        myStateMachine.GravityTick();
+        if (!myStateMachine.IsGrounded())
+        {
+            myStateMachine.GravityTick();
+        }
 
         Land();
     }

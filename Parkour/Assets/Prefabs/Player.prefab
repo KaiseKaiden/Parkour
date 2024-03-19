@@ -5059,7 +5059,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8834993677486349397}
-  m_Layer: 3
+  m_Layer: 7
   m_Name: Camera Holder
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5092,8 +5092,9 @@ GameObject:
   m_Component:
   - component: {fileID: 8880411473513014249}
   - component: {fileID: 3622536727755919030}
+  - component: {fileID: 4095436449136113011}
   - component: {fileID: 7845589516522913990}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Main Camera
   m_TagString: MainCamera
   m_Icon: {fileID: 0}
@@ -5156,7 +5157,7 @@ Camera:
   m_Depth: 0
   m_CullingMask:
     serializedVersion: 2
-    m_Bits: 4479
+    m_Bits: 8063
   m_RenderingPath: -1
   m_TargetTexture: {fileID: 0}
   m_TargetDisplay: 0
@@ -5168,6 +5169,19 @@ Camera:
   m_OcclusionCulling: 1
   m_StereoConvergence: 10
   m_StereoSeparation: 0.022
+--- !u!114 &4095436449136113011
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2124759306214908776}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3295bac7fd896a242926a8b22a144e60, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  myTopCamera: {fileID: 5166028766020405833}
 --- !u!81 &7845589516522913990
 AudioListener:
   m_ObjectHideFlags: 0
@@ -5186,9 +5200,9 @@ GameObject:
   m_Component:
   - component: {fileID: 8046507522257958006}
   - component: {fileID: 5166028766020405833}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: TopLayer Camera
-  m_TagString: MainCamera
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -5665,7 +5679,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -7937093264797559533, guid: f3c3d8b67e299dd409c4d3d4c7c66e0b, type: 3}
       propertyPath: m_Layer
-      value: 9
+      value: 7
       objectReference: {fileID: 0}
     - target: {fileID: -7935495654104420134, guid: f3c3d8b67e299dd409c4d3d4c7c66e0b, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -8283,6 +8297,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: sk_first_person
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: f3c3d8b67e299dd409c4d3d4c7c66e0b, type: 3}
+      propertyPath: m_Layer
+      value: 7
+      objectReference: {fileID: 0}
     - target: {fileID: 942527872107065818, guid: f3c3d8b67e299dd409c4d3d4c7c66e0b, type: 3}
       propertyPath: m_Layer
       value: 7
@@ -8637,7 +8655,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2202218598787253760, guid: f3c3d8b67e299dd409c4d3d4c7c66e0b, type: 3}
       propertyPath: m_Layer
-      value: 10
+      value: 7
       objectReference: {fileID: 0}
     - target: {fileID: 2222462952548430254, guid: f3c3d8b67e299dd409c4d3d4c7c66e0b, type: 3}
       propertyPath: m_Layer

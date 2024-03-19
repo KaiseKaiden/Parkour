@@ -49,7 +49,11 @@ public class PlayerCoyoteFallingState : State
         // Transitions
         if (myStateMachine.IsGrounded())
         {
-            if (myStateMachine.GetCurrentVelocity().y < -10.0f)
+            if (myStateMachine.GroundIsSlippy())
+            {
+                myStateMachine.ChangeState(PlayerStateMachine.eStates.Slide);
+            }
+            else if (myStateMachine.GetCurrentVelocity().y < -10.0f)
             {
                 if (Input.GetButton("Crouch"))
                 {
@@ -62,7 +66,7 @@ public class PlayerCoyoteFallingState : State
             }
             else
             {
-                if (Input.GetButton("Crouch") || myStateMachine.GroundIsSlippy())
+                if (Input.GetButton("Crouch"))
                 {
                     myStateMachine.ChangeState(PlayerStateMachine.eStates.Slide);
                 }

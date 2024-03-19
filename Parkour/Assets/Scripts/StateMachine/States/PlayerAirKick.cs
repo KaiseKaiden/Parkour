@@ -9,9 +9,11 @@ public class PlayerAirKick : State
 
     float myHitFreezeTime;
     bool myHasHit;
+    bool myHasJumped;
 
     GameObject myEnemyTarget;
     Vector3 myStartPosition;
+    Vector3 myDeciredAngle;
 
     float myElapsedTime;
 
@@ -26,14 +28,19 @@ public class PlayerAirKick : State
 
         myHitFreezeTime = 0.0f;
         myHasHit = false;
+        myHasJumped = false;
 
         myStateMachine.SetSpeedLinesActive(true);
 
         // Find Target
         myEnemyTarget = null;
-        myStateMachine.EnemyIsInRange(out myEnemyTarget);
-        myStartPosition = myStateMachine.transform.position;
-        myElapsedTime = 0.0f;
+        if (myStateMachine.EnemyIsInRange(out myEnemyTarget))
+        {
+            myStartPosition = myStateMachine.transform.position;
+            myElapsedTime = 0.0f;
+
+            myDeciredAngle = (myEnemyTarget.transform.position - myStateMachine.transform.position).normalized;
+        }
     }
 
     public override void OnExit()
@@ -49,6 +56,10 @@ public class PlayerAirKick : State
 
         if (myEnemyTarget != null)
         {
+            // Set Decired Angle
+            Quaternion rotation = Quaternion.LookRotation(new Vector3(myDeciredAngle.x, 0.0f, myDeciredAngle.z));
+            myStateMachine.transform.rotation = Quaternion.Lerp(myStateMachine.transform.rotation, rotation, 5.0f * Time.deltaTime);
+
             myElapsedTime += Time.deltaTime * 2.0f;
 
             Vector3 direction = (myEnemyTarget.transform.position - myStartPosition);
@@ -81,16 +92,21 @@ public class PlayerAirKick : State
         if (myHitFreezeTime < 0.0f)
         {
             Time.timeScale = 1.0f;
+
+            if (myHasJumped)
+            {
+                myStateMachine.ChangeState(PlayerStateMachine.eStates.KickBoost);
+                myHasHit = false;
+                myHasJumped = false;
+            }
         }
 
         // Jump Boost
         if (myHasHit)
         {
-            if (Input.GetButtonDown("Jump"))
+            if (Input.GetButton("Jump"))
             {
-                Time.timeScale = 1.0f;
-                myStateMachine.ChangeState(PlayerStateMachine.eStates.KickBoost);
-                myHasHit = false;
+                myHasJumped = true;
             }
         }
     }

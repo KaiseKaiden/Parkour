@@ -25,8 +25,6 @@ public class PlayerWallRunningState : State
             myDeciredAngle = -hit.normal;
             myUpDirection = -Vector3.Cross(leftDir, myDeciredAngle);
 
-            myStateMachine.SetDesiredAngle(-myDeciredAngle); // Set This For When/If You Wall Jump Later
-
             myVelocity = myUpDirection * myClimbingSpeed;
             myStateMachine.SetVelocityXYZ(myVelocity.x, myVelocity.y, myVelocity.z);
 

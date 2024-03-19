@@ -162,21 +162,25 @@ public class PlayerStateMachine : Observer
         }
 
         // Height
-        if (myCurrentHeight != myDesiredHeight)
+        /*if (myCurrentHeight != myDesiredHeight)
         {
             myCurrentHeight = Mathf.Lerp(myCurrentHeight, myDesiredHeight, Time.deltaTime * 2.5f);
             float scalar = myCurrentHeight * 0.5f;
             myCameraTransform.localPosition = myStartLocalCameraPosition * scalar;
-        }
+        }*/
+
         // FOV
         Camera.main.fieldOfView = Mathf.Lerp(Camera.main.fieldOfView, myDesiredFOV, Time.deltaTime * 3.5f);
+
         // CAM TILT
         //myCurrentCameraTilt = Mathf.Lerp(myCurrentCameraTilt, myDesiredCameraTilt, Time.deltaTime * 5.0f);
         //myCameraTransform.eulerAngles = new Vector3(myCameraTransform.eulerAngles.x, myCameraTransform.eulerAngles.y, myCurrentCameraTilt);
+
         // CAM SHAKE
         myCameraTransform.transform.localPosition = Vector3.zero;
         myScreenShakeIntensity = Mathf.Lerp(myScreenShakeIntensity, 0.0f, Time.deltaTime * 2.5f);
         if (Time.timeScale > 0.0f) myCameraTransform.transform.localPosition += transform.right * Random.Range(-myScreenShakeIntensity, myScreenShakeIntensity) + transform.up * Random.Range(-myScreenShakeIntensity, myScreenShakeIntensity);
+
         // Body Rot
         Quaternion rotation = Quaternion.Euler(new Vector3(myDesiredBodyXrot, 0.0f, 0.0f));
         myBodyTransform.transform.localRotation = Quaternion.Lerp(myBodyTransform.transform.localRotation, rotation, 5.0f * Time.deltaTime);
@@ -227,6 +231,8 @@ public class PlayerStateMachine : Observer
 
     public void ChangeState(eStates aState)
     {
+        Debug.Log(aState);
+
         myCurrentStateEnum = aState;
 
         if (myCurrentState != null) myCurrentState.OnExit();
@@ -341,6 +347,11 @@ public class PlayerStateMachine : Observer
     public LayerMask GetWallLayerMask()
     {
         return myWhatIsWall;
+    }
+
+    public LayerMask GetSlippyLayerMask()
+    {
+        return myWhatIsSlippy;
     }
 
     public bool RaycastForward(out RaycastHit aOutHit)
@@ -673,14 +684,6 @@ public class PlayerStateMachine : Observer
     public void Attacked()
     {
         myCachedStates[(int)eStates.AirKick].AttackHit();
-        Debug.Log("Attacked");
-        /*RaycastHit hit;
-        if (Physics.SphereCast(transform.position - transform.forward * 2.0f, 1.75f, transform.forward, out hit, 3.5f, myWhatIsEnemy))
-        {
-            hit.transform.root.GetComponent<Enemy>().KickedAt(hit.point, transform.forward * 250.0f);
-            myCachedStates[(int)eStates.AirKick].AttackHit();
-        }
-        else myCanKick = false;*/
     }
 
     public void AttackDone()

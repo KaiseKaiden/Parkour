@@ -88,7 +88,11 @@ public class PlayerHorizontalWallRunningState : State
         }
 
         RaycastHit hit;
-        if (myStateMachine.GetEdgeHit())
+        if (myStateMachine.GroundIsSlippy())
+        {
+            myStateMachine.ChangeState(PlayerStateMachine.eStates.Slide);
+        }
+        else if (myStateMachine.GetEdgeHit())
         {
             myStateMachine.ChangeState(PlayerStateMachine.eStates.LedgeClimb);
         }
