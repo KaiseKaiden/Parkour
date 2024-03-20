@@ -6,7 +6,6 @@ public class PlayerLedgeClimbState : State
 {
     Vector3 myStartPos;
     Vector3 myDesiredPos;
-    float mySpeedMultiplier;
     Vector3 myDiffernce;
 
     float myTime;
@@ -19,7 +18,6 @@ public class PlayerLedgeClimbState : State
         myStateMachine.GetCharacterController().enabled = false;
         myStartPos = myStateMachine.transform.position;
         myDesiredPos = myStateMachine.GetEdgeClimbPosition();
-        mySpeedMultiplier = myStateMachine.GetEdgeClimbSpeed();
 
         myDiffernce = myDesiredPos - myStartPos;
         myTime = 0.0f;
@@ -37,7 +35,7 @@ public class PlayerLedgeClimbState : State
     {
         myStateMachine.ForwardLookAround();
 
-        myTime += Time.deltaTime * 2.0f;
+        myTime += Time.deltaTime * 1.5f;
         myTime = Mathf.Clamp01(myTime);
 
         Vector3 newPosition = myStartPos + myDiffernce * EaseOutQuad(myTime);

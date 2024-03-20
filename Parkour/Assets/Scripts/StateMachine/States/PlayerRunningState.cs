@@ -60,9 +60,6 @@ public class PlayerRunningState : State
 
         myStateMachine.GetPlayerAnimator().SetFloat("speed", vel.magnitude);
 
-        // Camera Tilt
-        myStateMachine.SetDesiredCameraTilt(-Input.GetAxisRaw("Horizontal") * 1.5f);
-
         // Transitions
         Transitions();
     }

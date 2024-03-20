@@ -55,7 +55,7 @@ public class PlayerJumpState : State
         {
             myStateMachine.ChangeState(PlayerStateMachine.eStates.LedgeClimb);
         }
-        if (input.y > 0.0f && myStateMachine.IsHeadingForObstacle())
+        else if (input.y > 0.0f && myStateMachine.IsHeadingForObstacle())
         {
             myStateMachine.ChangeState(PlayerStateMachine.eStates.Vault);
         }

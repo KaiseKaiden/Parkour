@@ -9,19 +9,19 @@ public class PlayerWallTurning : State
     Vector3 myStartOrientation;
     Vector3 myStartVelocity;
 
+    bool myHasJumped;
+
     public override void OnEnter()
     {
+        myHasJumped = false;
         myActiveTime = 0.0f;
 
         myStartOrientation = myStateMachine.transform.eulerAngles;
         myStartVelocity = myStateMachine.GetCurrentVelocity();
-
-        myStateMachine.SetDesiredCameraTilt(-20.0f);
     }
 
     public override void OnExit()
     {
-        myStateMachine.SetDesiredCameraTilt(0.0f);
         myStateMachine.AdjustLookRotation();
     }
 
@@ -29,27 +29,34 @@ public class PlayerWallTurning : State
     {
         myStateMachine.ForwardLookAround();
 
-        myActiveTime += Time.deltaTime;
+        myActiveTime += Time.deltaTime * 2.0f;
 
         Turning();
         SlowingDown();
 
-        if (myActiveTime < 0.6f)
+        if (myActiveTime < 1.0f)
         {
             if (Input.GetButtonDown("Jump"))
             {
-                myStateMachine.ChangeState(PlayerStateMachine.eStates.WallJump);
+                myHasJumped = true;
             }
         }
         else
         {
-            myStateMachine.ChangeState(PlayerStateMachine.eStates.WallRunFall);
+            if (myHasJumped)
+            {
+                myStateMachine.ChangeState(PlayerStateMachine.eStates.WallJump);
+            }
+            else
+            {
+                myStateMachine.ChangeState(PlayerStateMachine.eStates.WallRunFall);
+            }
         }
     }
 
     void Turning()
     {
-        myStateMachine.SetDesiredCameraTilt(-10.0f - (10.0f * (1.0f - EaseOutCirc(Mathf.Clamp01(myActiveTime * 2.0f)))));
+        //myStateMachine.SetDesiredCameraTilt(-10.0f - (10.0f * (1.0f - EaseOutCirc(Mathf.Clamp01(myActiveTime * 2.0f)))));
 
         myStateMachine.transform.eulerAngles = new Vector3(0.0f, myStartOrientation.y + 180.0f * EaseOutCirc(Mathf.Clamp01(myActiveTime * 2.0f)), 0.0f);
     }

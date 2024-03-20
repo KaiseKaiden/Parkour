@@ -18,7 +18,7 @@ public class PlayerSlidingState : State
         myStateMachine.SetGroundedYVelocity();
 
         RaycastHit hit;
-        if (Physics.Raycast(myStateMachine.transform.position + Vector3.up, Vector3.down, out hit, 2.0f, myStateMachine.GetWallLayerMask()))
+        if (Physics.SphereCast(myStateMachine.transform.position + Vector3.up * 1.5f, myStateMachine.GetCharacterController().radius, Vector3.down, out hit, 2.0f, myStateMachine.GetWallLayerMask()))
         {
             if (hit.transform.gameObject.layer != myStateMachine.GetSlippyLayerMask())
             {
@@ -26,25 +26,32 @@ public class PlayerSlidingState : State
                 {
                     myCantSlide = true;
                     myStateMachine.ChangeState(PlayerStateMachine.eStates.Idle);
+                    Debug.Log("STOP");
                     return;
                 }
             }
 
+            // Ground The Player
+            Vector3 start = myStateMachine.transform.position + Vector3.up * 1.5f;
+            Vector3 end = hit.point;
+            Vector3 newPos = start + Vector3.down * (SphereCastStartToMiddleDistance(start, end) + myStateMachine.GetCharacterController().radius);
+
             myStateMachine.GetCharacterController().enabled = false;
-            myStateMachine.transform.position = hit.point;
+            myStateMachine.transform.position = newPos;
             myStateMachine.GetCharacterController().enabled = true;
         }
 
         myStateMachine.SetDesiredFOV(100.0f);
         myStateMachine.SetSpeedLinesActive(true);
 
+        myStateMachine.SetHeight(0.5f);
         myStateMachine.GetPlayerAnimator().SetTrigger("slide");
     }
 
     public override void OnExit()
     {
         myStateMachine.SetBodyRotationX(0.0f);
-
+        myStateMachine.SetHeight(2.0f);
         myStateMachine.SetDesiredFOV(90.0f);
 
         myStateMachine.SetSpeedLinesActive(false);
@@ -54,7 +61,6 @@ public class PlayerSlidingState : State
         if (!myCantSlide && myStateMachine.IsGrounded() && !Input.GetButton("Jump"))
         {
             myStateMachine.GetPlayerAnimator().SetTrigger("slidingStop");
-            //myStateMachine.SetVelocityXYZ(0.0f, -0.5f, 0.0f);
             myStateMachine.SetGroundedYVelocity();
         }
     }
@@ -74,14 +80,12 @@ public class PlayerSlidingState : State
         Vector3 controlledVelocity = new Vector3();
         bool slidingDown = false;
         RaycastHit hit;
-        //if (Physics.SphereCast(myStateMachine.transform.position + Vector3.up * 1.5f, myStateMachine.GetCharacterController().radius, Vector3.down, out hit, 2.0f, myStateMachine.GetWallLayerMask()))
-        if (Physics.Raycast(myStateMachine.transform.position + Vector3.up, Vector3.down, out hit, 2.0f, myStateMachine.GetWallLayerMask()))
+        if (Physics.SphereCast(myStateMachine.transform.position + Vector3.up * 1.5f, myStateMachine.GetCharacterController().radius, Vector3.down, out hit, 2.0f, myStateMachine.GetWallLayerMask()))
         {
             float slopeAngle = Vector3.Angle(hit.normal, Vector3.up);
-            //myStateMachine.GetBodyTransform().localEulerAngles = new Vector3(slopeAngle, 0.0f, 0.0f);
             myStateMachine.SetBodyRotationX(slopeAngle);
 
-            if (slopeAngle > 0.0f)
+            if (slopeAngle > 1.0f && (Vector3.Dot(Vector3.up, hit.normal) > 0.2f))
             {
                 Vector3 slopeDirection = Vector3.Cross(Vector3.Cross(Vector3.up, hit.normal), hit.normal).normalized;
                 velocity += slopeDirection * mySlopeMultiplier * slopeAngle * Time.deltaTime;
@@ -89,8 +93,12 @@ public class PlayerSlidingState : State
                 slidingDown = true;
 
                 // Ground The Player
+                Vector3 start = myStateMachine.transform.position + Vector3.up * 1.5f;
+                Vector3 end = hit.point;
+                Vector3 newPos = start + Vector3.down * (SphereCastStartToMiddleDistance(start, end) + myStateMachine.GetCharacterController().radius);
+
                 myStateMachine.GetCharacterController().enabled = false;
-                myStateMachine.transform.position = hit.point;
+                myStateMachine.transform.position = newPos;
                 myStateMachine.GetCharacterController().enabled = true;
 
                 // Set Correct Angle
@@ -109,8 +117,12 @@ public class PlayerSlidingState : State
         velocity = Vector3.ClampMagnitude(velocity, myMaxSlideSpeed);
         velocity += controlledVelocity;
 
+        if (!slidingDown)
+        {
+            velocity = Vector3.Lerp(myStateMachine.GetCurrentVelocity(), Vector3.zero, Time.deltaTime * 0.5f);
+        }
+
         myStateMachine.SetVelocityXYZ(velocity.x, velocity.y, velocity.z);
-        myStateMachine.GravityTick();
 
         // Transitions
         if (!myStateMachine.IsGrounded() && !myStateMachine.GroundIsSlippy())
@@ -127,13 +139,12 @@ public class PlayerSlidingState : State
     void AdjustHeight()
     {
         Vector3 velocity = myStateMachine.GetCurrentVelocity();
-        velocity.y = 0.0f;
 
         RaycastHit hit;
         Physics.SphereCast(myStateMachine.transform.position + Vector3.up, myStateMachine.GetCharacterController().radius, Vector3.down, out hit, 2.0f, myStateMachine.GetWallLayerMask());
 
-        if ((!Input.GetButton("Crouch") && !myStateMachine.GroundIsSlippy()) || 
-            (velocity.magnitude < 1.0f && Vector3.Dot(hit.normal, Vector3.up) == 1.0f && !myStateMachine.GroundIsSlippy()) || 
+        if ((!Input.GetButton("Crouch") && !myStateMachine.GroundIsSlippy() && velocity.magnitude < 6.0f) || 
+            (velocity.magnitude < 4.0f && Vector3.Dot(hit.normal, Vector3.up) == 1.0f && !myStateMachine.GroundIsSlippy()) || 
             (myStateMachine.RaycastSlideForward(out hit) && !myStateMachine.GroundIsSlippy()))
         {
             myStateMachine.SetSpeedLinesActive(false);
@@ -141,6 +152,19 @@ public class PlayerSlidingState : State
 
             myStateMachine.ChangeState(PlayerStateMachine.eStates.Idle);
             myStateMachine.SetHeight(2.0f);
+            Debug.Log("<color=red>STOP2</color>");
         }
+    }
+
+    float SphereCastStartToMiddleDistance(Vector3 aStart, Vector3 aHitPos)
+    {
+        float a = (new Vector2(aHitPos.x, aHitPos.z) - new Vector2(aStart.x, aStart.z)).magnitude;
+        float c = (aHitPos - aStart).magnitude;
+        float b = Mathf.Sqrt(Mathf.Pow(c, 2) - Mathf.Pow(a, 2));
+
+        float c2 = myStateMachine.GetCharacterController().radius;
+        float b2 = Mathf.Sqrt(Mathf.Pow(c2, 2) - Mathf.Pow(a, 2));
+
+        return (b - b2);
     }
 }

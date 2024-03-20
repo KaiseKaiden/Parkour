@@ -13,15 +13,15 @@ public class PlayerWallJump : State
 
     public override void OnEnter()
     {
-        myDesiredAngle = Quaternion.LookRotation(new Vector3(myStateMachine.GetDesiredAngle().x, 0.0f, myStateMachine.GetDesiredAngle().z));
-        Vector3 playerRotationHolder = myStateMachine.transform.eulerAngles;
-        myStateMachine.transform.rotation = myDesiredAngle;
+        //myDesiredAngle = Quaternion.LookRotation(new Vector3(myStateMachine.GetDesiredAngle().x, 0.0f, myStateMachine.GetDesiredAngle().z));
+        //Vector3 playerRotationHolder = myStateMachine.transform.eulerAngles;
+        //myStateMachine.transform.rotation = myDesiredAngle;
 
         Vector3 forward = myStateMachine.transform.forward;
         myStateMachine.SetVelocityXZ(forward.x * myMaxSpeed, forward.z * myMaxSpeed);
         myStateMachine.SetVelocityY(myJumpForce);
 
-        myStateMachine.transform.eulerAngles = playerRotationHolder;
+        //myStateMachine.transform.eulerAngles = playerRotationHolder;
 
         myCurrentXZForce.x = myStateMachine.GetCurrentVelocityXZ().x;
         myCurrentXZForce.y = myStateMachine.GetCurrentVelocityXZ().z;
@@ -37,7 +37,7 @@ public class PlayerWallJump : State
     public override void Tick()
     {
         // Set Correct Angle
-        myStateMachine.transform.rotation = Quaternion.Lerp(myStateMachine.transform.rotation, myDesiredAngle, 5.0f * Time.deltaTime);
+        //myStateMachine.transform.rotation = Quaternion.Lerp(myStateMachine.transform.rotation, myDesiredAngle, 5.0f * Time.deltaTime);
 
         myStateMachine.ForwardLookAround();
 

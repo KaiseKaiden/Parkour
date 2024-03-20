@@ -32,9 +32,6 @@ public class PlayerStateMachine : Observer
         WallJump,
         WallRunFall,
 
-        EdgeClimbHead,
-        EdgeClimbHipp,
-        EdgeClimbFeet,
         Vault,
         StepClimb,
 
@@ -119,9 +116,6 @@ public class PlayerStateMachine : Observer
         myCachedStates.Add(new PlayerWallJump());
         myCachedStates.Add(new PlayerWallRunningFallingState());
 
-        myCachedStates.Add(new PlayerEdgeClimbHeadState());
-        myCachedStates.Add(new PlayerEdgeClimbHippState());
-        myCachedStates.Add(new PlayerEdgeClimbFeetState());
         myCachedStates.Add(new PlayerVaultState());
         myCachedStates.Add(new PlayerStepClimbState());
 
@@ -143,6 +137,7 @@ public class PlayerStateMachine : Observer
         myCurrentHeight = 2.0f;
 
         PostMaster.Instance.Subscribe(eMessage.EdgeClimb, this);
+        PostMaster.Instance.Subscribe(eMessage.CheckpointReached, this);
     }
 
     void Update()
@@ -195,6 +190,8 @@ public class PlayerStateMachine : Observer
         {
             transform.position = mySpawnPosition;
             myVelocity = Vector3.zero;
+            ChangeState(eStates.Idle);
+            GetPlayerAnimator().SetTrigger("respawn");
         }
     }
 
@@ -203,6 +200,10 @@ public class PlayerStateMachine : Observer
         if (aMsg.GetMsg() == eMessage.EdgeClimb)
         {
             myEdgeClimbPosition = aMsg.GetVector3();
+        }
+        else if (aMsg.GetMsg() == eMessage.CheckpointReached)
+        {
+            mySpawnPosition = aMsg.GetVector3();
         }
     }
 
@@ -231,7 +232,14 @@ public class PlayerStateMachine : Observer
 
     public void ChangeState(eStates aState)
     {
-        Debug.Log(aState);
+        if (myCurrentStateEnum == eStates.LedgeClimb && aState == eStates.WallRun)
+        {
+            Debug.Log($"<color=red>THIS SHOULD BE IMPOSSIBLE!!!</color>");
+        }
+        else
+        {
+            Debug.Log(aState);
+        }
 
         myCurrentStateEnum = aState;
 

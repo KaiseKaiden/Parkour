@@ -5235,6 +5235,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Player (1)
       objectReference: {fileID: 0}
+    - target: {fileID: 307011207770793051, guid: 99bc10164c5d8a447a04e3d751d38ea3, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 629099757589682425, guid: 99bc10164c5d8a447a04e3d751d38ea3, type: 3}
       propertyPath: m_LocalPosition.x
       value: -21
@@ -22183,7 +22187,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 307011207770793051, guid: 99bc10164c5d8a447a04e3d751d38ea3, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 417878524436322935, guid: 99bc10164c5d8a447a04e3d751d38ea3, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -26186,7 +26190,7 @@ GameObject:
   - component: {fileID: 2895794253340247934}
   - component: {fileID: 646025967718605206}
   - component: {fileID: 9084384369895336470}
-  m_Layer: 12
+  m_Layer: 0
   m_Name: BlueBlock
   m_TagString: Untagged
   m_Icon: {fileID: 0}

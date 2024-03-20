@@ -62,9 +62,5 @@ public class PlayerIdleState : State
         {
             myStateMachine.ChangeState(PlayerStateMachine.eStates.Jump);
         }
-        else if (Input.GetButtonDown("Crouch"))
-        {
-            myStateMachine.ChangeState(PlayerStateMachine.eStates.Crouch);
-        }
     }
 }
