@@ -8,18 +8,15 @@ public class PlayerRunningState : State
     const float myBackwardSpeed = 5.0f;
     const float myAcceleration = 6.0f;
 
-    float myActiveTime;
-
     public override void OnEnter()
     {
-        myActiveTime = 0.0f;
+        
     }
 
     public override void OnExit()
     {
         myStateMachine.SetGroundedYVelocity();
         myStateMachine.SetDesiredCameraTilt(0.0f);
-        //myStateMachine.SetDesiredCameraHeight(2.0f);
 
         myStateMachine.GetPlayerAnimator().SetFloat("speed", 0.0f);
     }
@@ -33,11 +30,8 @@ public class PlayerRunningState : State
 
     void Move()
     {
-        //myStateMachine.SetDesiredCameraHeight(1.85f + Mathf.Sin(myActiveTime * 10.0f + 90.0f) * 0.15f);
         myStateMachine.GravityTick();
 
-
-        myActiveTime += Time.deltaTime;
         Vector2 input = myStateMachine.GetInput();
         Vector3 force = myStateMachine.transform.forward * input.y + myStateMachine.transform.right * input.x;
 
@@ -87,14 +81,7 @@ public class PlayerRunningState : State
         {
             if (input.y > 0.0f && myStateMachine.IsHeadingForObstacle())
             {
-                if (myStateMachine.GetCurrentVelocityXZ().magnitude < mySpeed * 2.0f)
-                {
-                    myStateMachine.ChangeState(PlayerStateMachine.eStates.StepClimb);
-                }
-                else
-                {
-                    myStateMachine.ChangeState(PlayerStateMachine.eStates.Vault);
-                }
+                myStateMachine.ChangeState(PlayerStateMachine.eStates.Vault);
             }
             else
             {

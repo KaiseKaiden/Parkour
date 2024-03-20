@@ -7,13 +7,11 @@ public class PlayerSlidingState : State
     float myMaxSlideSpeed = 10.0f;
     float mySlopeMultiplier = 1.001f;
 
-    float myEasingValue;
     bool myCantSlide;
 
     public override void OnEnter()
     {
         myCantSlide = false;
-        myEasingValue = 0.0f;
 
         myStateMachine.SetGroundedYVelocity();
 
@@ -34,7 +32,7 @@ public class PlayerSlidingState : State
             // Ground The Player
             Vector3 start = myStateMachine.transform.position + Vector3.up * 1.5f;
             Vector3 end = hit.point;
-            Vector3 newPos = start + Vector3.down * (SphereCastStartToMiddleDistance(start, end) + myStateMachine.GetCharacterController().radius);
+            Vector3 newPos = start + Vector3.down * (myStateMachine.SphereCastStartToMiddleDistance(start, end) + myStateMachine.GetCharacterController().radius);
 
             myStateMachine.GetCharacterController().enabled = false;
             myStateMachine.transform.position = newPos;
@@ -95,7 +93,7 @@ public class PlayerSlidingState : State
                 // Ground The Player
                 Vector3 start = myStateMachine.transform.position + Vector3.up * 1.5f;
                 Vector3 end = hit.point;
-                Vector3 newPos = start + Vector3.down * (SphereCastStartToMiddleDistance(start, end) + myStateMachine.GetCharacterController().radius);
+                Vector3 newPos = start + Vector3.down * (myStateMachine.SphereCastStartToMiddleDistance(start, end) + myStateMachine.GetCharacterController().radius);
 
                 myStateMachine.GetCharacterController().enabled = false;
                 myStateMachine.transform.position = newPos;
@@ -154,17 +152,5 @@ public class PlayerSlidingState : State
             myStateMachine.SetHeight(2.0f);
             Debug.Log("<color=red>STOP2</color>");
         }
-    }
-
-    float SphereCastStartToMiddleDistance(Vector3 aStart, Vector3 aHitPos)
-    {
-        float a = (new Vector2(aHitPos.x, aHitPos.z) - new Vector2(aStart.x, aStart.z)).magnitude;
-        float c = (aHitPos - aStart).magnitude;
-        float b = Mathf.Sqrt(Mathf.Pow(c, 2) - Mathf.Pow(a, 2));
-
-        float c2 = myStateMachine.GetCharacterController().radius;
-        float b2 = Mathf.Sqrt(Mathf.Pow(c2, 2) - Mathf.Pow(a, 2));
-
-        return (b - b2);
     }
 }

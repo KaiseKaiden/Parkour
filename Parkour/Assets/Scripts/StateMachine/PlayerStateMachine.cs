@@ -362,6 +362,11 @@ public class PlayerStateMachine : Observer
         return myWhatIsSlippy;
     }
 
+    public LayerMask GetGroundLayerMask()
+    {
+        return myWhatIsGround;
+    }
+
     public bool RaycastForward(out RaycastHit aOutHit)
     {
         //Transform trans = myCameraTransform;
@@ -760,5 +765,17 @@ public class PlayerStateMachine : Observer
 
         aGameObject = null;
         return false;
+    }
+
+    public float SphereCastStartToMiddleDistance(Vector3 aStart, Vector3 aHitPos)
+    {
+        float a = (new Vector2(aHitPos.x, aHitPos.z) - new Vector2(aStart.x, aStart.z)).magnitude;
+        float c = (aHitPos - aStart).magnitude;
+        float b = Mathf.Sqrt(Mathf.Pow(c, 2) - Mathf.Pow(a, 2));
+
+        float c2 = GetCharacterController().radius;
+        float b2 = Mathf.Sqrt(Mathf.Pow(c2, 2) - Mathf.Pow(a, 2));
+
+        return (b - b2);
     }
 }
