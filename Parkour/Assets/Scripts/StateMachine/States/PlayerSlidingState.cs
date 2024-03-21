@@ -78,17 +78,20 @@ public class PlayerSlidingState : State
         Vector3 controlledVelocity = new Vector3();
         bool slidingDown = false;
         RaycastHit hit;
-        if (Physics.SphereCast(myStateMachine.transform.position + Vector3.up * 1.5f, myStateMachine.GetCharacterController().radius, Vector3.down, out hit, 2.0f, myStateMachine.GetWallLayerMask()))
+        if (Physics.SphereCast(myStateMachine.transform.position + Vector3.up * 1.5f, myStateMachine.GetCharacterController().radius, Vector3.down, out hit, 2.5f, myStateMachine.GetWallLayerMask()))
         {
-            float slopeAngle = Vector3.Angle(hit.normal, Vector3.up);
+            RaycastHit hit2;
+            Physics.Raycast(hit.point + Vector3.up, Vector3.down, out hit2, 1.5f, myStateMachine.GetWallLayerMask());
+            float slopeAngle = Vector3.Angle(hit2.normal, Vector3.up);
             myStateMachine.SetBodyRotationX(slopeAngle);
 
-            if (slopeAngle > 1.0f && (Vector3.Dot(Vector3.up, hit.normal) > 0.2f))
+            if (slopeAngle > 1.0f)
             {
                 Vector3 slopeDirection = Vector3.Cross(Vector3.Cross(Vector3.up, hit.normal), hit.normal).normalized;
                 velocity += slopeDirection * mySlopeMultiplier * slopeAngle * Time.deltaTime;
 
                 slidingDown = true;
+                Debug.Log(slopeAngle);
 
                 // Ground The Player
                 Vector3 start = myStateMachine.transform.position + Vector3.up * 1.5f;
@@ -105,7 +108,7 @@ public class PlayerSlidingState : State
 
                 // Apply Sliding Movement
                 Vector2 input = myStateMachine.GetInput();
-                controlledVelocity = Vector3.Cross(Vector3.up, hit.normal) * input.x * myMaxSlideSpeed * 2.0f * Time.deltaTime;
+                controlledVelocity = Vector3.Cross(Vector3.up, hit2.normal) * input.x * myMaxSlideSpeed * 2.0f * Time.deltaTime; // This might cause some issues
 
                 // Apply Camera Shake
                 myStateMachine.SetScreenShakeIntensity(0.025f);
@@ -123,7 +126,9 @@ public class PlayerSlidingState : State
         myStateMachine.SetVelocityXYZ(velocity.x, velocity.y, velocity.z);
 
         // Transitions
-        if (!myStateMachine.IsGrounded() && !myStateMachine.GroundIsSlippy())
+        if (!myStateMachine.IsGrounded() && 
+            !myStateMachine.GroundIsSlippy() &&
+            !Physics.Raycast(myStateMachine.transform.position + Vector3.up * 1.5f, Vector3.down, 2.0f, myStateMachine.GetWallLayerMask()))
         {
             myStateMachine.ChangeState(PlayerStateMachine.eStates.Falling);
             myStateMachine.SetGroundedYVelocity();
