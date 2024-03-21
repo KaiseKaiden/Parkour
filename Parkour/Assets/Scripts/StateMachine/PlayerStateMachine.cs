@@ -180,19 +180,16 @@ public class PlayerStateMachine : Observer
         Quaternion rotation = Quaternion.Euler(new Vector3(myDesiredBodyXrot, 0.0f, 0.0f));
         myBodyTransform.transform.localRotation = Quaternion.Lerp(myBodyTransform.transform.localRotation, rotation, 5.0f * Time.deltaTime);
 
-        Respawn();
+        if (transform.position.y < -18.0f) Respawn();
         GetPlayerAnimator().SetBool("isGrounded", IsGrounded());
     }
 
-    void Respawn()
+    public void Respawn()
     {
-        if (transform.position.y < -15.0f)
-        {
             transform.position = mySpawnPosition;
             myVelocity = Vector3.zero;
             ChangeState(eStates.Idle);
             GetPlayerAnimator().SetTrigger("respawn");
-        }
     }
 
     override public void Recive(Message aMsg)
@@ -714,7 +711,11 @@ public class PlayerStateMachine : Observer
         GameObject[] enemies = GameObject.FindGameObjectsWithTag("Enemy");
         foreach (GameObject e in enemies)
         {
-            e.GetComponent<Outline>().enabled = false;
+            Outline outline = e.GetComponent<Outline>();
+            if (outline != null)
+            {
+                outline.enabled = false;
+            }
         }
     }
 
