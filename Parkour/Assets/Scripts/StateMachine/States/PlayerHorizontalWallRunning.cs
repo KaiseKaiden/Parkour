@@ -36,6 +36,8 @@ public class PlayerHorizontalWallRunningState : State
             myIsRight = false;
             myStateMachine.SetDesiredCameraTilt(-20.0f);
 
+            myStateMachine.GetPlayerAnimator().SetTrigger("wallRunLeft");
+
             return;
         }
 
@@ -54,6 +56,8 @@ public class PlayerHorizontalWallRunningState : State
 
             myIsRight = true;
             myStateMachine.SetDesiredCameraTilt(20.0f);
+
+            myStateMachine.GetPlayerAnimator().SetTrigger("wallRunRight");
 
             return;
         }
