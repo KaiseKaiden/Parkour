@@ -36,14 +36,12 @@ public class PlayerRollLanding : State
 
         myStateMachine.GetPlayerAnimator().SetTrigger("rolling");
 
-        myStateMachine.SetHeight(0.5f);
-
         myStateMachine.CreateLandParticle();
     }
 
     public override void OnExit()
     {
-        myStateMachine.SetDesiredCameraTilt(0.0f);
+        
     }
 
     public override void Tick()
@@ -62,19 +60,7 @@ public class PlayerRollLanding : State
 
         if (myActiveTime > 1.0f)
         {
-            if (Physics.Raycast(myStateMachine.transform.position + Vector3.one * 0.3f, Vector3.up, 1.7f, myStateMachine.GetWallLayerMask()))
-            {
-                myStateMachine.ChangeState(PlayerStateMachine.eStates.Crouch);
-            }
-            else if (Input.GetButton("Crouch"))
-            {
-                myStateMachine.ChangeState(PlayerStateMachine.eStates.Crouch);
-            }
-            else
-            {
-                myStateMachine.ChangeState(PlayerStateMachine.eStates.Idle);
-                myStateMachine.SetHeight(2.0f);
-            }
+            myStateMachine.ChangeState(PlayerStateMachine.eStates.Idle);
         }
     }
 }

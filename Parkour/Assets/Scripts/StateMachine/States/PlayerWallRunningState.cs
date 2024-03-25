@@ -9,8 +9,6 @@ public class PlayerWallRunningState : State
     Vector3 myVelocity;
     Vector3 myDeciredAngle;
 
-    float myActiveTime;
-
     public override void OnEnter()
     {
         RaycastHit hit;
@@ -31,14 +29,11 @@ public class PlayerWallRunningState : State
             myStateMachine.GetPlayerAnimator().SetTrigger("verticalWallRun");
         }
 
-        myActiveTime = 0.0f;
-
         myStateMachine.SetSpeedLinesActive(true);
     }
 
     public override void OnExit()
     {
-        myStateMachine.SetDesiredCameraTilt(0.0f);
         myStateMachine.AdjustLookRotation();
         myStateMachine.SetSpeedLinesActive(false);
     }
@@ -59,9 +54,6 @@ public class PlayerWallRunningState : State
         myVelocity.y -= 10.0f * Time.deltaTime;
         myStateMachine.SetVelocityXYZ(myVelocity.x, myVelocity.y, myVelocity.z);
 
-        myActiveTime += Time.deltaTime * 10.0f;
-        myStateMachine.SetDesiredCameraTilt(Mathf.Sin(myActiveTime) * 10.0f);
-
         if (myStateMachine.GetCharacterController().velocity.y < 0.0f)
         {
             myStateMachine.ChangeState(PlayerStateMachine.eStates.WallRunFall);
@@ -73,6 +65,11 @@ public class PlayerWallRunningState : State
         else if (Input.GetKeyDown(KeyCode.Q))
         {
             myStateMachine.ChangeState(PlayerStateMachine.eStates.WallTurn);
+        }
+        else if (myStateMachine.HasHitHead())
+        {
+            myStateMachine.SetGroundedYVelocity();
+            myStateMachine.ChangeState(PlayerStateMachine.eStates.WallRunFall);
         }
     }
 }

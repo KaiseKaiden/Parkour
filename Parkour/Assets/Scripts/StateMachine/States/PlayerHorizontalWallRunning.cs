@@ -15,7 +15,6 @@ public class PlayerHorizontalWallRunningState : State
 
     public override void OnEnter()
     {
-        myStateMachine.SetGroundedYVelocity();
         myStateMachine.SetSpeedLinesActive(true);
         myTimeAfterLeavingEdge = 0.0f;
 
@@ -34,7 +33,6 @@ public class PlayerHorizontalWallRunningState : State
             myStateMachine.SetVelocityXYZ(myVelocity.x, myVelocity.y, myVelocity.z);
 
             myIsRight = false;
-            myStateMachine.SetDesiredCameraTilt(-20.0f);
 
             myStateMachine.GetPlayerAnimator().SetTrigger("wallRunLeft");
 
@@ -55,7 +53,6 @@ public class PlayerHorizontalWallRunningState : State
             myStateMachine.SetVelocityXYZ(myVelocity.x, myVelocity.y, myVelocity.z);
 
             myIsRight = true;
-            myStateMachine.SetDesiredCameraTilt(20.0f);
 
             myStateMachine.GetPlayerAnimator().SetTrigger("wallRunRight");
 
@@ -65,7 +62,6 @@ public class PlayerHorizontalWallRunningState : State
 
     public override void OnExit()
     {
-        myStateMachine.SetDesiredCameraTilt(0.0f);
         myStateMachine.AdjustLookRotation();
         myStateMachine.SetSpeedLinesActive(false);
     }
@@ -86,11 +82,6 @@ public class PlayerHorizontalWallRunningState : State
         myVelocity.y -= 5.0f * Time.deltaTime;
         myStateMachine.SetVelocityXYZ(myVelocity.x, myVelocity.y, myVelocity.z);
 
-        if (myVelocity.y < -2.5f)
-        {
-            myStateMachine.SetDesiredCameraTilt(15.0f);
-        }
-
         RaycastHit hit;
         if (myStateMachine.GroundIsSlippy())
         {
@@ -100,7 +91,7 @@ public class PlayerHorizontalWallRunningState : State
         {
             myStateMachine.ChangeState(PlayerStateMachine.eStates.LedgeClimb);
         }
-        else if (myStateMachine.RaycastForward(out hit))
+        else if (Physics.Raycast(myStateMachine.transform.position + Vector3.up, new Vector3(myDeciredAngle.x, 0.0f, myDeciredAngle.z), 1.0f, myStateMachine.GetWallLayerMask()))
         {
             myStateMachine.ChangeState(PlayerStateMachine.eStates.Falling);
         }
@@ -141,7 +132,7 @@ public class PlayerHorizontalWallRunningState : State
         }
         else if (myStateMachine.IsGrounded())
         {
-            myStateMachine.ChangeState(PlayerStateMachine.eStates.Idle);
+            myStateMachine.ChangeState(PlayerStateMachine.eStates.Running);
         }
     }
 }

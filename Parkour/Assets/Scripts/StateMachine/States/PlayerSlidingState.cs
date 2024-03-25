@@ -23,7 +23,15 @@ public class PlayerSlidingState : State
                 if (Vector3.Dot(myStateMachine.transform.forward, hit.normal) < 0.0f)
                 {
                     myCantSlide = true;
-                    myStateMachine.ChangeState(PlayerStateMachine.eStates.Idle);
+                    if (myStateMachine.GetPreviusState() == PlayerStateMachine.eStates.Falling)
+                    {
+                        myStateMachine.ChangeState(PlayerStateMachine.eStates.IdleLand);
+                    }
+                    else
+                    {
+                        myStateMachine.ChangeState(PlayerStateMachine.eStates.Idle);
+                    }
+
                     Debug.Log("STOP");
                     return;
                 }
@@ -118,7 +126,7 @@ public class PlayerSlidingState : State
         velocity = Vector3.ClampMagnitude(velocity, myMaxSlideSpeed);
         velocity += controlledVelocity;
 
-        if (!slidingDown)
+        if (!slidingDown && !Physics.SphereCast(myStateMachine.transform.position + Vector3.up * 0.6f, 0.5f, Vector3.up, out hit, 0.8f, myStateMachine.GetWallLayerMask()))
         {
             velocity = Vector3.Lerp(myStateMachine.GetCurrentVelocity(), Vector3.zero, Time.deltaTime * 0.5f);
         }

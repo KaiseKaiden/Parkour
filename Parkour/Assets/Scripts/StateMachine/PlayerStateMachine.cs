@@ -19,7 +19,6 @@ public class PlayerStateMachine : Observer
         CayoteFalling,
 
         Roll,
-        Crouch,
         HardLand,
         IdleLand,
         Slide,
@@ -33,7 +32,6 @@ public class PlayerStateMachine : Observer
         WallRunFall,
 
         Vault,
-        StepClimb,
 
         LedgeClimb,
         AirKick,
@@ -45,11 +43,11 @@ public class PlayerStateMachine : Observer
     List<State> myCachedStates = new List<State>();
     State myCurrentState;
 
+    public eStates myPreviusStateEnum = eStates.Count;
     public eStates myCurrentStateEnum;
 
     [SerializeField] Animator myPlayerAnimator;
     CharacterController myCharacterController;
-    PlayerAnimationCurves myAnimationCurves;
 
     [Space(10)]
 
@@ -75,8 +73,6 @@ public class PlayerStateMachine : Observer
     float myDesiredHeight;
     float myCurrentHeight;
     float myDesiredFOV;
-    float myCurrentCameraTilt;
-    float myDesiredCameraTilt;
     float myScreenShakeIntensity;
     float myDesiredBodyXrot;
 
@@ -90,7 +86,6 @@ public class PlayerStateMachine : Observer
         mySpawnPosition = transform.position;
 
         myCharacterController = GetComponent<CharacterController>();
-        myAnimationCurves = GetComponent<PlayerAnimationCurves>();
 
         Cursor.lockState = CursorLockMode.Locked;
 
@@ -103,7 +98,6 @@ public class PlayerStateMachine : Observer
         myCachedStates.Add(new PlayerCoyoteFallingState());
 
         myCachedStates.Add(new PlayerRollLanding());
-        myCachedStates.Add(new PlayerCrouchState());
         myCachedStates.Add(new PlayerHardLanding());
         myCachedStates.Add(new PlayerIdleLanding());
         myCachedStates.Add(new PlayerSlidingState());
@@ -117,7 +111,6 @@ public class PlayerStateMachine : Observer
         myCachedStates.Add(new PlayerWallRunningFallingState());
 
         myCachedStates.Add(new PlayerVaultState());
-        myCachedStates.Add(new PlayerStepClimbState());
 
         myCachedStates.Add(new PlayerLedgeClimbState());
         myCachedStates.Add(new PlayerAirKick());
@@ -143,6 +136,7 @@ public class PlayerStateMachine : Observer
     void Update()
     {
         ResetEnemyOutline();
+
         if (!myCanKick) // Reset Kick
         {
             myCanKick = IsGrounded();
@@ -156,20 +150,8 @@ public class PlayerStateMachine : Observer
             GetCharacterController().Move(myVelocity * Time.deltaTime);
         }
 
-        // Height
-        /*if (myCurrentHeight != myDesiredHeight)
-        {
-            myCurrentHeight = Mathf.Lerp(myCurrentHeight, myDesiredHeight, Time.deltaTime * 2.5f);
-            float scalar = myCurrentHeight * 0.5f;
-            myCameraTransform.localPosition = myStartLocalCameraPosition * scalar;
-        }*/
-
         // FOV
         Camera.main.fieldOfView = Mathf.Lerp(Camera.main.fieldOfView, myDesiredFOV, Time.deltaTime * 3.5f);
-
-        // CAM TILT
-        //myCurrentCameraTilt = Mathf.Lerp(myCurrentCameraTilt, myDesiredCameraTilt, Time.deltaTime * 5.0f);
-        //myCameraTransform.eulerAngles = new Vector3(myCameraTransform.eulerAngles.x, myCameraTransform.eulerAngles.y, myCurrentCameraTilt);
 
         // CAM SHAKE
         myCameraTransform.transform.localPosition = Vector3.zero;
@@ -233,16 +215,26 @@ public class PlayerStateMachine : Observer
         {
             Debug.Log($"<color=red>THIS SHOULD BE IMPOSSIBLE!!!</color>");
         }
+        else if (myCurrentStateEnum == eStates.WallRunH && aState == eStates.Falling)
+        {
+            Debug.Log($"<color=red>WTF?</color>");
+        }
         else
         {
             Debug.Log(aState);
         }
 
+        myPreviusStateEnum = myCurrentStateEnum;
         myCurrentStateEnum = aState;
 
         if (myCurrentState != null) myCurrentState.OnExit();
         myCurrentState = myCachedStates[(int)aState];
         myCurrentState.OnEnter();
+    }
+
+    public eStates GetPreviusState()
+    {
+        return myPreviusStateEnum;
     }
 
     public eStates GetCurrentState()
@@ -293,7 +285,14 @@ public class PlayerStateMachine : Observer
 
     public bool IsGrounded()
     {
-        return Physics.OverlapSphere(transform.position - Vector3.down * 0.1f, GetCharacterController().radius, myWhatIsGround).Length > 0;
+        return myCharacterController.isGrounded;
+        //return Physics.OverlapSphere(transform.position, GetCharacterController().radius, myWhatIsGround).Length > 0;
+        //return Physics.OverlapSphere(transform.position + Vector3.down * 0.1f, GetCharacterController().radius - 0.1f, myWhatIsGround).Length > 0;
+    }
+
+    public bool HasHitHead()
+    {
+        return Physics.OverlapSphere(transform.position + Vector3.up * 1.8f, GetCharacterController().radius - 0.1f, myWhatIsWall).Length > 0;
     }
 
     public Animator GetPlayerAnimator()
@@ -304,11 +303,6 @@ public class PlayerStateMachine : Observer
     public CharacterController GetCharacterController()
     {
         return myCharacterController;
-    }
-
-    public PlayerAnimationCurves GetAnimationCurves()
-    {
-        return myAnimationCurves;
     }
 
     public void SetVelocityXZ(float aX, float aZ)
@@ -387,7 +381,7 @@ public class PlayerStateMachine : Observer
         Vector3 left = transform.forward - transform.right;
         left.Normalize();
 
-        if (Physics.Raycast(transform.position + Vector3.up, left, out aOutHit, 1.0f, GetWallLayerMask()))
+        if (Physics.Raycast(transform.position + Vector3.up, left, out aOutHit, 1.5f, GetWallLayerMask()))
         {
             return true;
         }
@@ -403,7 +397,7 @@ public class PlayerStateMachine : Observer
         Vector3 right = transform.forward + transform.right;
         right.Normalize();
 
-        if (Physics.Raycast(transform.position + Vector3.up, right, out aOutHit, 1.0f, GetWallLayerMask()))
+        if (Physics.Raycast(transform.position + Vector3.up, right, out aOutHit, 1.5f, GetWallLayerMask()))
         {
             return true;
         }
@@ -489,16 +483,21 @@ public class PlayerStateMachine : Observer
     // EEE
     public bool GetEdgeHit()
     {
-        if (!Physics.Raycast(transform.position + Vector3.up * 2.8f, transform.forward, 1.0f, GetWallLayerMask()))
+        if (Physics.Raycast(transform.position + Vector3.up, Vector3.up, 1.1f, GetWallLayerMask()))
+        {
+            return false;
+        }
+
+        if (!Physics.Raycast(transform.position + Vector3.up * 2.2f, transform.forward, 1.0f, GetWallLayerMask()))
         {
             RaycastHit hit;
 
-            if (Physics.Raycast(transform.position + Vector3.up * 2.8f + transform.forward, Vector3.down, out hit, 2.5f, GetWallLayerMask()))
+            if (Physics.Raycast(transform.position + Vector3.up * 2.2f + transform.forward, Vector3.down, out hit, 1.5f, GetWallLayerMask()))
             {
                 if (Vector3.Dot(hit.normal, Vector3.up) == 1.0f)
                 {
                     myEdgeClimbPosition = hit.point;
-                    myEdgeClimbSpeed = Mathf.Clamp(hit.distance / 2.5f, 0.5f, 1.0f);
+                    //myEdgeClimbSpeed = Mathf.Clamp(hit.distance / 2.5f, 0.5f, 1.0f);
 
                     return true;
                 }
@@ -538,11 +537,6 @@ public class PlayerStateMachine : Observer
     public void SetDesiredFOV(float aFOV)
     {
         myDesiredFOV = aFOV;
-    }
-
-    public void SetDesiredCameraTilt(float aAngle)
-    {
-        myDesiredCameraTilt = aAngle;
     }
 
     public void SetScreenShakeIntensity(float aIntensity)
@@ -662,6 +656,7 @@ public class PlayerStateMachine : Observer
 
     public bool GroundIsSlippy()
     {
+        //return Physics.OverlapSphere(transform.position + Vector3.up * (GetCharacterController().radius - 0.2f), GetCharacterController().radius, myWhatIsSlippy).Length > 0;
         return Physics.OverlapSphere(transform.position - Vector3.down * 0.1f, GetCharacterController().radius, myWhatIsSlippy).Length > 0;
     }
 

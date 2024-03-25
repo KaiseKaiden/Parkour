@@ -81,9 +81,6 @@ public class PlayerFallingState : State
         }
         else
         {
-            GameObject obj;
-            myStateMachine.EnemyIsInRange(out obj);
-
             if (Input.GetButtonDown("Attack") && myStateMachine.CanKick())
             {
                 myStateMachine.ChangeState(PlayerStateMachine.eStates.AirKick);

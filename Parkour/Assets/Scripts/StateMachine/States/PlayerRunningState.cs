@@ -16,7 +16,6 @@ public class PlayerRunningState : State
     public override void OnExit()
     {
         myStateMachine.SetGroundedYVelocity();
-        myStateMachine.SetDesiredCameraTilt(0.0f);
 
         myStateMachine.GetPlayerAnimator().SetFloat("speed", 0.0f);
     }
@@ -62,9 +61,6 @@ public class PlayerRunningState : State
     {
         Vector2 input = myStateMachine.GetInput();
 
-        GameObject obj;
-        myStateMachine.EnemyIsInRange(out obj);
-
         if (!myStateMachine.IsGrounded())
         {
             myStateMachine.ChangeState(PlayerStateMachine.eStates.CayoteFalling);
@@ -95,10 +91,6 @@ public class PlayerRunningState : State
         else if (Input.GetButtonDown("Crouch") && input.y > 0.75f)
         {
             myStateMachine.ChangeState(PlayerStateMachine.eStates.Slide);
-        }
-        else if (Input.GetButtonDown("Crouch"))
-        {
-            myStateMachine.ChangeState(PlayerStateMachine.eStates.Crouch);
         }
     }
 }

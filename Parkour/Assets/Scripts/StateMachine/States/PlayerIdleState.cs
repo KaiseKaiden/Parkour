@@ -7,7 +7,6 @@ public class PlayerIdleState : State
     public override void OnEnter()
     {
         myStateMachine.SetDesiredFOV(90.0f);
-        myStateMachine.SetDesiredCameraTilt(0.0f);
 
         RaycastHit hit;
         if (Physics.Raycast(myStateMachine.transform.position, Vector3.down, out hit, 1.0f, myStateMachine.GetWallLayerMask()))

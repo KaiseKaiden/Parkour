@@ -34,8 +34,6 @@ public class PlayerHardLanding : State
     {
         myActiveTime += Time.deltaTime;
 
-        myStateMachine.SetCameraHeight(1.3f + myStateMachine.GetAnimationCurves().myHardLandingCurve.Evaluate(myActiveTime) * 0.7f);
-
         if (myActiveTime > 1.0f)
         {
             myStateMachine.ChangeState(PlayerStateMachine.eStates.Idle);

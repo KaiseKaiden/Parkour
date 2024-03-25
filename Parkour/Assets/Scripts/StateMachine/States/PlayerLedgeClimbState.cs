@@ -35,11 +35,10 @@ public class PlayerLedgeClimbState : State
     {
         myStateMachine.ForwardLookAround();
 
-        myTime += Time.deltaTime * 1.5f;
+        myTime += Time.deltaTime * 1.25f;
         myTime = Mathf.Clamp01(myTime);
 
         Vector3 newPosition = myStartPos + myDiffernce * EaseOutQuad(myTime);
-
         myStateMachine.transform.position = newPosition;
 
         if (myTime == 1.0f)

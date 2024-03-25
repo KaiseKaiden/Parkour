@@ -41,7 +41,7 @@ public class PlayerJumpState : State
 
         GameObject obj;
         myStateMachine.EnemyIsInRange(out obj);
-
+        
         RaycastHit hit;
         if (Input.GetButtonDown("Attack") && myStateMachine.CanKick())
         {
