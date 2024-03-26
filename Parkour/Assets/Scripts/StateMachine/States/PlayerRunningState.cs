@@ -25,6 +25,7 @@ public class PlayerRunningState : State
         myStateMachine.LookAround();
 
         Move();
+        Transitions();
     }
 
     void Move()
@@ -52,9 +53,6 @@ public class PlayerRunningState : State
 
 
         myStateMachine.GetPlayerAnimator().SetFloat("speed", vel.magnitude);
-
-        // Transitions
-        Transitions();
     }
 
     void Transitions()

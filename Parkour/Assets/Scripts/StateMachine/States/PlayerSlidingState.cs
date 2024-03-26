@@ -32,7 +32,6 @@ public class PlayerSlidingState : State
                         myStateMachine.ChangeState(PlayerStateMachine.eStates.Idle);
                     }
 
-                    Debug.Log("STOP");
                     return;
                 }
             }
@@ -99,7 +98,6 @@ public class PlayerSlidingState : State
                 velocity += slopeDirection * mySlopeMultiplier * slopeAngle * Time.deltaTime;
 
                 slidingDown = true;
-                Debug.Log(slopeAngle);
 
                 // Ground The Player
                 Vector3 start = myStateMachine.transform.position + Vector3.up * 1.5f;
@@ -163,7 +161,6 @@ public class PlayerSlidingState : State
 
             myStateMachine.ChangeState(PlayerStateMachine.eStates.Idle);
             myStateMachine.SetHeight(2.0f);
-            Debug.Log("<color=red>STOP2</color>");
         }
     }
 }

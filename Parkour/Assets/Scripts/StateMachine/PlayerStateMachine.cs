@@ -83,6 +83,8 @@ public class PlayerStateMachine : Observer
 
     void Start()
     {
+        GroundPlayer();
+
         mySpawnPosition = transform.position;
 
         myCharacterController = GetComponent<CharacterController>();
@@ -133,6 +135,15 @@ public class PlayerStateMachine : Observer
         PostMaster.Instance.Subscribe(eMessage.CheckpointReached, this);
     }
 
+    void GroundPlayer()
+    {
+        RaycastHit hit;
+        if (Physics.Raycast(transform.position + Vector3.up, Vector3.down, out hit))
+        {
+            transform.position = hit.point;
+        }
+    }
+
     void Update()
     {
         ResetEnemyOutline();
@@ -168,10 +179,13 @@ public class PlayerStateMachine : Observer
 
     public void Respawn()
     {
-            transform.position = mySpawnPosition;
-            myVelocity = Vector3.zero;
-            ChangeState(eStates.Idle);
-            GetPlayerAnimator().SetTrigger("respawn");
+        transform.position = mySpawnPosition;
+        myVelocity = Vector3.zero;
+        ChangeState(eStates.Idle);
+        GetPlayerAnimator().SetTrigger("respawn");
+
+        Message message = new Message(eMessage.Respawn, Vector3.zero);
+        PostMaster.Instance.SendMessage(message);
     }
 
     override public void Recive(Message aMsg)
@@ -211,19 +225,6 @@ public class PlayerStateMachine : Observer
 
     public void ChangeState(eStates aState)
     {
-        if (myCurrentStateEnum == eStates.LedgeClimb && aState == eStates.WallRun)
-        {
-            Debug.Log($"<color=red>THIS SHOULD BE IMPOSSIBLE!!!</color>");
-        }
-        else if (myCurrentStateEnum == eStates.WallRunH && aState == eStates.Falling)
-        {
-            Debug.Log($"<color=red>WTF?</color>");
-        }
-        else
-        {
-            Debug.Log(aState);
-        }
-
         myPreviusStateEnum = myCurrentStateEnum;
         myCurrentStateEnum = aState;
 
@@ -247,7 +248,9 @@ public class PlayerStateMachine : Observer
 
     public void AdjustLookRotation()
     {
+        Vector3 bodyEuler = myBodyTransform.eulerAngles;
         transform.eulerAngles = new Vector3(transform.eulerAngles.x, myCameraTransform.eulerAngles.y, transform.eulerAngles.z);
+        myBodyTransform.eulerAngles = bodyEuler;
     }
 
     public void LookAround()
@@ -261,7 +264,7 @@ public class PlayerStateMachine : Observer
 
         myLookRotY += mouseY * lookSensitivity * Time.deltaTime;
         myLookRotY = Mathf.Clamp(myLookRotY, -70.0f, 70.0f);
-        myCameraTransform.localEulerAngles = new Vector3(myLookRotY, 0.0f, myCameraTransform.localEulerAngles.z);
+        myCameraTransform.localEulerAngles = new Vector3(myLookRotY, -myBodyTransform.localEulerAngles.y, myCameraTransform.localEulerAngles.z);
 
         // Save Camera Euler
         myStaticCameraEuler = myCameraTransform.localEulerAngles;
@@ -280,13 +283,13 @@ public class PlayerStateMachine : Observer
 
         myLookRotY += mouseY * lookSensitivity * Time.deltaTime;
         myLookRotY = Mathf.Clamp(myLookRotY, -70.0f, 70.0f);
-        myCameraTransform.localEulerAngles = new Vector3(myLookRotY, myStaticCameraEuler.y + myLookRotX, myCameraTransform.localEulerAngles.z);
+        myCameraTransform.localEulerAngles = new Vector3(myLookRotY, myStaticCameraEuler.y + myLookRotX - myBodyTransform.localEulerAngles.y, myCameraTransform.localEulerAngles.z);
     }
 
     public bool IsGrounded()
     {
-        return myCharacterController.isGrounded;
-        //return Physics.OverlapSphere(transform.position, GetCharacterController().radius, myWhatIsGround).Length > 0;
+        //return myCharacterController.isGrounded;
+        return Physics.OverlapSphere(transform.position, GetCharacterController().radius, myWhatIsGround).Length > 0;
         //return Physics.OverlapSphere(transform.position + Vector3.down * 0.1f, GetCharacterController().radius - 0.1f, myWhatIsGround).Length > 0;
     }
 
@@ -494,7 +497,7 @@ public class PlayerStateMachine : Observer
 
             if (Physics.Raycast(transform.position + Vector3.up * 2.2f + transform.forward, Vector3.down, out hit, 1.5f, GetWallLayerMask()))
             {
-                if (Vector3.Dot(hit.normal, Vector3.up) == 1.0f)
+                if (Vector3.Dot(hit.normal, Vector3.up) > 0.8f)
                 {
                     myEdgeClimbPosition = hit.point;
                     //myEdgeClimbSpeed = Mathf.Clamp(hit.distance / 2.5f, 0.5f, 1.0f);
