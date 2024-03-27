@@ -22,7 +22,8 @@ public class PlayerLedgeClimbState : State
         myDiffernce = myDesiredPos - myStartPos;
         myTime = 0.0f;
 
-        myStateMachine.GetPlayerAnimator().SetTrigger("verticalClimb");
+        myStateMachine.GetPlayerAnimator().SetFloat("speed", 0.0f);
+        myStateMachine.SetVelocityXYZ(0.0f, -0.5f, 0.0f);
     }
 
     public override void OnExit()
@@ -35,20 +36,26 @@ public class PlayerLedgeClimbState : State
     {
         myStateMachine.ForwardLookAround();
 
-        myTime += Time.deltaTime * 1.25f;
-        myTime = Mathf.Clamp01(myTime);
+        if (myStateMachine.GetPlayerAnimator().GetCurrentAnimatorStateInfo(0).IsName("PlayerWallClimb"))
+        {
+            myTime = myStateMachine.GetPlayerAnimator().GetCurrentAnimatorStateInfo(0).normalizedTime;
+        }
+        else
+        {
+            myTime = myStateMachine.GetPlayerAnimator().GetCurrentAnimatorStateInfo(1).normalizedTime;
+        }
 
         Vector3 newPosition = myStartPos + myDiffernce * EaseOutQuad(myTime);
         myStateMachine.transform.position = newPosition;
-
-        if (myTime == 1.0f)
-        {
-            myStateMachine.ChangeState(PlayerStateMachine.eStates.Idle);
-        }
     }
 
     float EaseOutQuad(float aValue)
     {
         return 1.0f - (1.0f - aValue) * (1.0f - aValue);
+    }
+
+    public override void AnimDone()
+    {
+        myStateMachine.ChangeState(PlayerStateMachine.eStates.Idle);
     }
 }

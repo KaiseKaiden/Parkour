@@ -16,13 +16,21 @@ public class PlayerWallRunningFallingState : State
         myCurrentXZForce.x = myStateMachine.GetCurrentVelocityXZ().x;
         myCurrentXZForce.y = myStateMachine.GetCurrentVelocityXZ().z;
 
-        myStateMachine.GetPlayerAnimator().SetTrigger("fallFrom180");
+        if (myStateMachine.GetPreviusState() == PlayerStateMachine.eStates.WallTurn)
+        {
+            myStateMachine.GetPlayerAnimator().SetTrigger("fallFrom180");
+        }
+        else
+        {
+            myStateMachine.GetPlayerAnimator().SetTrigger("fall");
+        }
     }
 
     public override void OnExit()
     {
         myStateMachine.SetSpeedLinesActive(false);
 
+        myStateMachine.GetPlayerAnimator().ResetTrigger("fallFrom180");
         myStateMachine.GetPlayerAnimator().ResetTrigger("fall");
     }
 
