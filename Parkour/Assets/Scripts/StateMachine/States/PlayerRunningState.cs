@@ -16,8 +16,6 @@ public class PlayerRunningState : State
     public override void OnExit()
     {
         myStateMachine.SetGroundedYVelocity();
-
-        //myStateMachine.GetPlayerAnimator().SetFloat("speed", 0.0f);
     }
 
     public override void Tick()
@@ -52,7 +50,7 @@ public class PlayerRunningState : State
         myStateMachine.SetVelocityXZ(vel.x, vel.y);
 
 
-        myStateMachine.GetPlayerAnimator().SetFloat("speed", vel.magnitude);
+        myStateMachine.GetPlayerAnimator().SetFloat("speed", vel.magnitude / mySpeed);
     }
 
     void Transitions()

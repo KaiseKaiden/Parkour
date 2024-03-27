@@ -20,6 +20,7 @@ public class PlayerIdleLanding : State
         }
 
         myStateMachine.ChangeState(PlayerStateMachine.eStates.Idle);
+        AudioManager.Instance.PlaySound(AudioManager.eSound.Land, myStateMachine.transform.position);
     }
 
     public override void OnExit()

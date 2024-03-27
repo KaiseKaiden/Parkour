@@ -13,6 +13,7 @@ public class PlayerWallJumpToRight : State
         myStateMachine.SetVelocityXYZ(vel.x, vel.y, vel.z);
 
         myStateMachine.GetPlayerAnimator().SetTrigger("jump");
+        AudioManager.Instance.PlaySound(AudioManager.eSound.Jump, myStateMachine.transform.position);
     }
 
     public override void OnExit()

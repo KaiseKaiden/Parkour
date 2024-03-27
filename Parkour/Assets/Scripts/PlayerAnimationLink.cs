@@ -6,13 +6,13 @@ public class PlayerAnimationLink : MonoBehaviour
 {
     [SerializeField] PlayerStateMachine myStateMachine;
 
-    public void AirKick()
+    public void AnimImpact()
     {
-        myStateMachine.Attacked();
+        myStateMachine.AnimImpact();
     }
 
-    public void AttackDone()
+    public void AnimDone()
     {
-        myStateMachine.AttackDone();
+        myStateMachine.AnimDone();
     }
 }

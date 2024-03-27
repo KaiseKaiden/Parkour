@@ -16,6 +16,7 @@ public class PlayerJumpState : State
         myCurrentXZForce.x = myStateMachine.GetCurrentVelocityXZ().x;
         myCurrentXZForce.y = myStateMachine.GetCurrentVelocityXZ().z;
 
+        AudioManager.Instance.PlaySound(AudioManager.eSound.Jump, myStateMachine.transform.position);
         myStateMachine.GetPlayerAnimator().SetTrigger("jump");
     }
 

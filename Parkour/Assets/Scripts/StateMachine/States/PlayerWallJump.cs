@@ -9,24 +9,18 @@ public class PlayerWallJump : State
     const float myMaxSpeed = 7.5f;
 
     Vector2 myCurrentXZForce;
-    Quaternion myDesiredAngle;
 
     public override void OnEnter()
     {
-        //myDesiredAngle = Quaternion.LookRotation(new Vector3(myStateMachine.GetDesiredAngle().x, 0.0f, myStateMachine.GetDesiredAngle().z));
-        //Vector3 playerRotationHolder = myStateMachine.transform.eulerAngles;
-        //myStateMachine.transform.rotation = myDesiredAngle;
-
         Vector3 forward = myStateMachine.transform.forward;
         myStateMachine.SetVelocityXZ(forward.x * myMaxSpeed, forward.z * myMaxSpeed);
         myStateMachine.SetVelocityY(myJumpForce);
 
-        //myStateMachine.transform.eulerAngles = playerRotationHolder;
-
         myCurrentXZForce.x = myStateMachine.GetCurrentVelocityXZ().x;
         myCurrentXZForce.y = myStateMachine.GetCurrentVelocityXZ().z;
 
-        myStateMachine.GetPlayerAnimator().SetTrigger("jump");
+        myStateMachine.GetPlayerAnimator().SetTrigger("jumpFrom180");
+        AudioManager.Instance.PlaySound(AudioManager.eSound.Jump, myStateMachine.transform.position);
     }
 
     public override void OnExit()
@@ -36,9 +30,6 @@ public class PlayerWallJump : State
 
     public override void Tick()
     {
-        // Set Correct Angle
-        //myStateMachine.transform.rotation = Quaternion.Lerp(myStateMachine.transform.rotation, myDesiredAngle, 5.0f * Time.deltaTime);
-
         myStateMachine.ForwardLookAround();
 
         Movement();

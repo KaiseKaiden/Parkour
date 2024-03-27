@@ -16,6 +16,7 @@ public class PlayerHardLanding : State
         myStateMachine.CreateLandParticle();
 
         myStateMachine.GetPlayerAnimator().SetTrigger("hardLand");
+        AudioManager.Instance.PlaySound(AudioManager.eSound.HardLand, myStateMachine.transform.position);
     }
 
     public override void OnExit()

@@ -17,6 +17,7 @@ public class PlayerSlopeJumpState : State
         myCurrentXZForce.y = myStateMachine.GetCurrentVelocityXZ().z;
 
         myStateMachine.GetPlayerAnimator().SetTrigger("jump");
+        AudioManager.Instance.PlaySound(AudioManager.eSound.Jump, myStateMachine.transform.position);
     }
 
     public override void OnExit()

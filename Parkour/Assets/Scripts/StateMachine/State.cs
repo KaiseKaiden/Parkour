@@ -26,12 +26,12 @@ public class State
 
     }
 
-    public virtual void AttackDone()
+    public virtual void AnimDone()
     {
 
     }
 
-    public virtual bool AttackHit()
+    public virtual bool AnimImpact()
     {
         return false;
     }

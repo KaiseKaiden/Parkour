@@ -16,13 +16,7 @@ public class PlayerWallRunningFallingState : State
         myCurrentXZForce.x = myStateMachine.GetCurrentVelocityXZ().x;
         myCurrentXZForce.y = myStateMachine.GetCurrentVelocityXZ().z;
 
-        //myCanWallRun = true;
-        //if (myStateMachine.WallRunnLeftTransition() || myStateMachine.WallRunnRightTransition())
-        //{
-        //    myCanWallRun = false;
-        //}
-
-        myStateMachine.GetPlayerAnimator().SetTrigger("fall");
+        myStateMachine.GetPlayerAnimator().SetTrigger("fallFrom180");
     }
 
     public override void OnExit()

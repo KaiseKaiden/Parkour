@@ -22,6 +22,8 @@ public class PlayerKickBoost : State
         myStateMachine.GetPlayerAnimator().SetTrigger("jump");
 
         myStateMachine.SetSpeedLinesActive(true);
+
+        AudioManager.Instance.PlaySound(AudioManager.eSound.KickBoost, myStateMachine.transform.position);
     }
 
     public override void OnExit()

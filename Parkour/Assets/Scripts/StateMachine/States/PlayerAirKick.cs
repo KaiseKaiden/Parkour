@@ -111,7 +111,7 @@ public class PlayerAirKick : State
         }
     }
 
-    public override void AttackDone()
+    public override void AnimDone()
     {
         if (myStateMachine.GetCurrentState() == PlayerStateMachine.eStates.AirKick)
         {
@@ -128,7 +128,7 @@ public class PlayerAirKick : State
         }
     }
 
-    public override bool AttackHit()
+    public override bool AnimImpact()
     {
         if (myStateMachine.GetCurrentState() == PlayerStateMachine.eStates.AirKick)
         {
@@ -141,22 +141,13 @@ public class PlayerAirKick : State
                 myHitFreezeTime = 0.2f;
                 myHasHit = true;
 
+                AudioManager.Instance.PlaySound(AudioManager.eSound.Hit, myEnemyTarget.transform.position + Vector3.up);
                 myStateMachine.SetScreenShakeIntensity(0.05f);
                 return true;
             }
         }
 
         return false;
-
-        //if (myStateMachine.GetCurrentState() == PlayerStateMachine.eStates.AirKick)
-        //{
-        //    Debug.Log("Hit");
-        //    Time.timeScale = 0.0f;
-        //    myHitFreezeTime = 0.2f;
-        //    myHasHit = true;
-
-        //    myStateMachine.SetScreenShakeIntensity(0.05f);
-        //}
     }
 
     float EaseInSine(float aValue)

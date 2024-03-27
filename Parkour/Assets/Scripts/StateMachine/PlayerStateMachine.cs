@@ -689,14 +689,14 @@ public class PlayerStateMachine : Observer
         emission.enabled = aBool;
     }
 
-    public void Attacked()
+    public void AnimImpact()
     {
-        myCachedStates[(int)eStates.AirKick].AttackHit();
+        myCachedStates[(int)myCurrentStateEnum].AnimImpact();
     }
 
-    public void AttackDone()
+    public void AnimDone()
     {
-        myCachedStates[(int)eStates.AirKick].AttackDone();
+        myCachedStates[(int)myCurrentStateEnum].AnimDone();
     }
 
     public bool CanKick()

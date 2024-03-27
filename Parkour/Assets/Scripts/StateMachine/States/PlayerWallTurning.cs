@@ -10,14 +10,18 @@ public class PlayerWallTurning : State
     Vector3 myStartVelocity;
 
     bool myHasJumped;
+    bool myHasTurned;
 
     public override void OnEnter()
     {
         myHasJumped = false;
+        myHasTurned = false;
         myActiveTime = 0.0f;
 
         myStartOrientation = myStateMachine.transform.eulerAngles;
         myStartVelocity = myStateMachine.GetCurrentVelocity();
+
+        myStateMachine.GetPlayerAnimator().SetTrigger("wallTurn");
     }
 
     public override void OnExit()
@@ -31,34 +35,17 @@ public class PlayerWallTurning : State
 
         myActiveTime += Time.deltaTime * 2.0f;
 
-        Turning();
         SlowingDown();
 
-        if (myActiveTime < 1.0f)
+        if (Input.GetButtonDown("Jump"))
         {
-            if (Input.GetButtonDown("Jump"))
-            {
-                myHasJumped = true;
-            }
+            myHasJumped = true;
         }
-        else
+
+        if (myHasJumped && myHasTurned)
         {
-            if (myHasJumped)
-            {
-                myStateMachine.ChangeState(PlayerStateMachine.eStates.WallJump);
-            }
-            else
-            {
-                myStateMachine.ChangeState(PlayerStateMachine.eStates.WallRunFall);
-            }
+            myStateMachine.ChangeState(PlayerStateMachine.eStates.WallJump);
         }
-    }
-
-    void Turning()
-    {
-        //myStateMachine.SetDesiredCameraTilt(-10.0f - (10.0f * (1.0f - EaseOutCirc(Mathf.Clamp01(myActiveTime * 2.0f)))));
-
-        myStateMachine.transform.eulerAngles = new Vector3(0.0f, myStartOrientation.y + 180.0f * EaseOutCirc(Mathf.Clamp01(myActiveTime * 2.0f)), 0.0f);
     }
 
     void SlowingDown()
@@ -70,5 +57,20 @@ public class PlayerWallTurning : State
     float EaseOutCirc(float aValue)
     {
         return Mathf.Sqrt(1.0f - Mathf.Pow(aValue - 1.0f, 2));
+    }
+
+    public override void AnimDone()
+    {
+        if (!myHasJumped)
+        {
+            myStateMachine.ChangeState(PlayerStateMachine.eStates.WallRunFall);
+        }
+    }
+
+    public override bool AnimImpact()
+    {
+        myHasTurned = true;
+
+        return true;
     }
 }
