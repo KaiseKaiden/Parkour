@@ -173,7 +173,7 @@ public class PlayerStateMachine : Observer
         Quaternion rotation = Quaternion.Euler(new Vector3(myDesiredBodyXrot, 0.0f, 0.0f));
         myBodyTransform.transform.localRotation = Quaternion.Lerp(myBodyTransform.transform.localRotation, rotation, 5.0f * Time.deltaTime);
 
-        if (transform.position.y < -18.0f) Respawn();
+        if (transform.position.y < -8.0f) Respawn();
         GetPlayerAnimator().SetBool("isGrounded", IsGrounded());
     }
 

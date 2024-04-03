@@ -22,12 +22,14 @@ public class PlayerLedgeClimbState : State
         myDiffernce = myDesiredPos - myStartPos;
         myTime = 0.0f;
 
-        myStateMachine.GetPlayerAnimator().SetFloat("speed", 0.0f);
+        myStateMachine.GetPlayerAnimator().SetTrigger("verticalClimb");
+        myStateMachine.GetPlayerAnimator().ResetTrigger("verticalWallRun");
         myStateMachine.SetVelocityXYZ(0.0f, -0.5f, 0.0f);
     }
 
     public override void OnExit()
     {
+        myStateMachine.GetPlayerAnimator().SetFloat("speed", 0.0f);
         myStateMachine.GetCharacterController().enabled = true;
         myStateMachine.AdjustLookRotation();
     }
