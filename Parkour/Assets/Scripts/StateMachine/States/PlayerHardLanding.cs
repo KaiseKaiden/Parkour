@@ -4,19 +4,11 @@ using UnityEngine;
 
 public class PlayerHardLanding : State
 {
-    float myActiveTime;
-
     public override void OnEnter()
     {
         myStateMachine.SetVelocityXYZ(0.0f, 0.0f, 0.0f);
-        myActiveTime = 0.0f;
-
-        myStateMachine.SetScreenShakeIntensity(0.2f);
-
-        myStateMachine.CreateLandParticle();
 
         myStateMachine.GetPlayerAnimator().SetTrigger("hardLand");
-        AudioManager.Instance.PlaySound(AudioManager.eSound.HardLand, myStateMachine.transform.position);
     }
 
     public override void OnExit()
@@ -27,17 +19,19 @@ public class PlayerHardLanding : State
     public override void Tick()
     {
         myStateMachine.ForwardLookAround();
-
-        Land();
     }
 
-    void Land()
+    public override bool AnimImpact()
     {
-        myActiveTime += Time.deltaTime;
+        myStateMachine.SetScreenShakeIntensity(0.05f);
+        myStateMachine.CreateLandParticle();
+        AudioManager.Instance.PlaySound(AudioManager.eSound.HardLand, myStateMachine.transform.position);
 
-        if (myActiveTime > 1.0f)
-        {
-            myStateMachine.ChangeState(PlayerStateMachine.eStates.Idle);
-        }
+        return true;
+    }
+
+    public override void AnimDone()
+    {
+        myStateMachine.ChangeState(PlayerStateMachine.eStates.Idle);
     }
 }
