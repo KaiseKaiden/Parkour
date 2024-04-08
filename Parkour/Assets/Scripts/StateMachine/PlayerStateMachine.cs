@@ -77,6 +77,7 @@ public class PlayerStateMachine : Observer
     float myDesiredBodyXrot;
 
     Vector3 mySpawnPosition;
+    Vector3 mySpawnOrientation;
 
     [SerializeField] GameObject myLandParticle;
     [SerializeField] ParticleSystem mySpeedLinesParticleSystem;
@@ -86,6 +87,7 @@ public class PlayerStateMachine : Observer
         GroundPlayer();
 
         mySpawnPosition = transform.position;
+        mySpawnOrientation = transform.eulerAngles;
 
         myCharacterController = GetComponent<CharacterController>();
 
@@ -132,7 +134,8 @@ public class PlayerStateMachine : Observer
         myCurrentHeight = 2.0f;
 
         PostMaster.Instance.Subscribe(eMessage.EdgeClimb, this);
-        PostMaster.Instance.Subscribe(eMessage.CheckpointReached, this);
+        PostMaster.Instance.Subscribe(eMessage.CheckpointPosition, this);
+        PostMaster.Instance.Subscribe(eMessage.CheckpointOrientation, this);
     }
 
     void GroundPlayer()
@@ -180,9 +183,14 @@ public class PlayerStateMachine : Observer
     public void Respawn()
     {
         transform.position = mySpawnPosition;
+        transform.eulerAngles = mySpawnOrientation;
         myVelocity = Vector3.zero;
         ChangeState(eStates.Idle);
         GetPlayerAnimator().SetTrigger("respawn");
+
+        myLookRotY = 0.0f;
+        myLookRotX = 0.0f;
+        myCameraTransform.localEulerAngles = Vector3.zero;
 
         Message message = new Message(eMessage.Respawn, Vector3.zero);
         PostMaster.Instance.SendMessage(message);
@@ -194,9 +202,13 @@ public class PlayerStateMachine : Observer
         {
             myEdgeClimbPosition = aMsg.GetVector3();
         }
-        else if (aMsg.GetMsg() == eMessage.CheckpointReached)
+        else if (aMsg.GetMsg() == eMessage.CheckpointPosition)
         {
             mySpawnPosition = aMsg.GetVector3();
+        }
+        else if (aMsg.GetMsg() == eMessage.CheckpointOrientation)
+        {
+            mySpawnOrientation = aMsg.GetVector3();
         }
     }
 

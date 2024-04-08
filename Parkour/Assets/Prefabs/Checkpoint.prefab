@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 183960085649046209}
   - component: {fileID: 3753740947672615511}
   - component: {fileID: 1894865573255310217}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: Checkpoint
   m_TagString: Untagged
   m_Icon: {fileID: 5721338939258241955, guid: 0000000000000000d000000000000000, type: 0}
@@ -66,3 +66,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8ecb83c772897c44f892f918533ccbef, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  myLayerMask:
+    serializedVersion: 2
+    m_Bits: 8191

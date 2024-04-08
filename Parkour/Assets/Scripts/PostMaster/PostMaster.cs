@@ -6,7 +6,8 @@ public enum eMessage
 {
     EdgeClimb,
     Vault,
-    CheckpointReached,
+    CheckpointPosition,
+    CheckpointOrientation,
     Respawn,
     Count
 }
