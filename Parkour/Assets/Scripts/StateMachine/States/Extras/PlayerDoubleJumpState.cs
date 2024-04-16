@@ -2,9 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerSlopeJumpState : State
+public class PlayerDoubleJumpState : State
 {
-    const float myJumpForce = 4.5f;
+    const float myJumpForce = 2.5f;
     const float myAcceleration = 15.0f;
     const float myMaxSpeed = 7.5f;
 
@@ -16,13 +16,15 @@ public class PlayerSlopeJumpState : State
         myCurrentXZForce.x = myStateMachine.GetCurrentVelocityXZ().x;
         myCurrentXZForce.y = myStateMachine.GetCurrentVelocityXZ().z;
 
-        myStateMachine.GetPlayerAnimator().SetTrigger("jump");
         AudioManager.Instance.PlaySound(AudioManager.eSound.Jump, myStateMachine.transform.position);
+        myStateMachine.GetPlayerAnimator().SetTrigger("jump");
+
+        myStateMachine.SetCanDoubleJump(false);
     }
 
     public override void OnExit()
     {
-        myStateMachine.AdjustLookRotation();
+
     }
 
     public override void Tick()
@@ -38,32 +40,38 @@ public class PlayerSlopeJumpState : State
         myStateMachine.GravityTick();
 
         // Transitions
+        Vector2 input = myStateMachine.GetInput();
+
         GameObject obj;
         myStateMachine.EnemyIsInRange(out obj);
-
+        
         RaycastHit hit;
-        if (Input.GetButtonDown("Jump") && myStateMachine.CanDoubleJump())
-        {
-            myStateMachine.ChangeState(PlayerStateMachine.eStates.DoubleJump);
-        }
-        else if (Input.GetButtonDown("Attack") && myStateMachine.CanKick())
+        if (Input.GetButtonDown("Attack") && myStateMachine.CanKick())
         {
             myStateMachine.ChangeState(PlayerStateMachine.eStates.AirKick);
+        }
+        else if (myStateMachine.GroundIsSlippy())
+        {
+            myStateMachine.ChangeState(PlayerStateMachine.eStates.Slide);
         }
         else if (myStateMachine.GetEdgeHit())
         {
             myStateMachine.ChangeState(PlayerStateMachine.eStates.LedgeClimb);
         }
-        else if (myStateMachine.GetCharacterController().velocity.y > 1.0f && myStateMachine.RaycastForward(out hit))
+        else if (input.y > 0.0f && myStateMachine.IsHeadingForObstacle())
+        {
+            myStateMachine.ChangeState(PlayerStateMachine.eStates.Vault);
+        }
+        else if (myStateMachine.RaycastForward(out hit))
         {
             myStateMachine.ChangeState(PlayerStateMachine.eStates.WallRun);
         }
-        else if (myStateMachine.WallRunnLeftTransition())
+        else if (myStateMachine.WallRunnLeftTransition() && !Input.GetButton("Crouch"))
         {
             // Wallrun Left
             myStateMachine.ChangeState(PlayerStateMachine.eStates.WallRunH);
         }
-        else if (myStateMachine.WallRunnRightTransition())
+        else if (myStateMachine.WallRunnRightTransition() && !Input.GetButton("Crouch"))
         {
             // Wallrun Right
             myStateMachine.ChangeState(PlayerStateMachine.eStates.WallRunH);

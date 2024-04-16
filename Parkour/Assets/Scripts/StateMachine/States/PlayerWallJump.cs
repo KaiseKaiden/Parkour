@@ -45,7 +45,11 @@ public class PlayerWallJump : State
         myStateMachine.EnemyIsInRange(out obj);
 
         RaycastHit hit;
-        if (myStateMachine.GetEdgeHit())
+        if (Input.GetButtonDown("Jump") && myStateMachine.CanDoubleJump())
+        {
+            myStateMachine.ChangeState(PlayerStateMachine.eStates.DoubleJump);
+        }
+        else if (myStateMachine.GetEdgeHit())
         {
             myStateMachine.ChangeState(PlayerStateMachine.eStates.LedgeClimb);
         }

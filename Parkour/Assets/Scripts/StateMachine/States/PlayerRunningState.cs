@@ -6,7 +6,7 @@ public class PlayerRunningState : State
 {
     const float mySpeed = 7.5f;
     const float myBackwardSpeed = 5.0f;
-    const float myAcceleration = 6.0f;
+    const float myAcceleration = 8.0f;
 
     public override void OnEnter()
     {

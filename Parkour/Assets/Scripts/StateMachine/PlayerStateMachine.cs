@@ -8,6 +8,7 @@ public class PlayerStateMachine : Observer
     const float myMaxVaultDistance = 4.5f;
 
     bool myCanKick = false;
+    bool myCanDoubleJump = false;
 
     public enum eStates : int
     {
@@ -36,6 +37,10 @@ public class PlayerStateMachine : Observer
         LedgeClimb,
         AirKick,
         KickBoost,
+
+
+        DoubleJump,
+
 
         Count
     }
@@ -120,6 +125,9 @@ public class PlayerStateMachine : Observer
         myCachedStates.Add(new PlayerAirKick());
         myCachedStates.Add(new PlayerKickBoost());
 
+
+        myCachedStates.Add(new PlayerDoubleJumpState());
+
         for (int i = 0; i < myCachedStates.Count; i++)
         {
             myCachedStates[i].Init(this);
@@ -154,6 +162,11 @@ public class PlayerStateMachine : Observer
         if (!myCanKick) // Reset Kick
         {
             myCanKick = IsGrounded();
+        }
+
+        if (!myCanDoubleJump)
+        {
+            myCanDoubleJump = IsGrounded();
         }
 
         if (myCurrentState != null) myCurrentState.Tick();
@@ -714,6 +727,21 @@ public class PlayerStateMachine : Observer
     public bool CanKick()
     {
         return myCanKick;
+    }
+
+    public void SetCanKick(bool aValue)
+    {
+        myCanKick = aValue;
+    }
+
+    public bool CanDoubleJump()
+    {
+        return myCanDoubleJump;
+    }
+
+    public void SetCanDoubleJump(bool aValue)
+    {
+        myCanDoubleJump = aValue;
     }
 
     void ResetEnemyOutline()

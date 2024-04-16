@@ -147,10 +147,13 @@ public class PlayerAirKick : State
 
                 AudioManager.Instance.PlaySound(AudioManager.eSound.Hit, myEnemyTarget.transform.position + Vector3.up);
                 myStateMachine.SetScreenShakeIntensity(0.05f);
+
+                myStateMachine.SetCanKick(true);
                 return true;
             }
         }
 
+        myStateMachine.SetCanKick(false);
         return false;
     }
 
