@@ -18,7 +18,7 @@ public class PlayerHardLanding : State
 
     public override void Tick()
     {
-        myStateMachine.ForwardLookAround();
+        myStateMachine.AdjustCameraRotation();
     }
 
     public override bool AnimImpact()

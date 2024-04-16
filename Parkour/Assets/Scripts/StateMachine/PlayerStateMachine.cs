@@ -311,6 +311,14 @@ public class PlayerStateMachine : Observer
         myCameraTransform.localEulerAngles = new Vector3(myLookRotY, myStaticCameraEuler.y + myLookRotX - myBodyTransform.localEulerAngles.y, myCameraTransform.localEulerAngles.z);
     }
 
+    public void AdjustCameraRotation()
+    {
+        myLookRotY = 0.0f;
+        myLookRotX = 0.0f;
+
+        myCameraTransform.localRotation = Quaternion.Lerp(myCameraTransform.localRotation, Quaternion.identity, Time.deltaTime * 5.0f);
+    }
+
     public bool IsGrounded()
     {
         //return myCharacterController.isGrounded;
