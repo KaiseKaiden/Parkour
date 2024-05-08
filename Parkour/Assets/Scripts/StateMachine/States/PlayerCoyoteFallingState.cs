@@ -78,11 +78,7 @@ public class PlayerCoyoteFallingState : State
         }
         else
         {
-            if (Input.GetButtonDown("Attack"))
-            {
-                myStateMachine.ChangeState(PlayerStateMachine.eStates.AirKick);
-            }
-            else if (Input.GetButton("Jump") && myActiveTime < 0.5f)
+            if (Input.GetButton("Jump") && myActiveTime < 0.5f)
             {
                 myStateMachine.ChangeState(PlayerStateMachine.eStates.Jump);
             }

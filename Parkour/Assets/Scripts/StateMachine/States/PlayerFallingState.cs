@@ -81,15 +81,7 @@ public class PlayerFallingState : State
         }
         else
         {
-            if (Input.GetButtonDown("Jump") && myStateMachine.CanDoubleJump())
-            {
-                myStateMachine.ChangeState(PlayerStateMachine.eStates.DoubleJump);
-            }
-            else if (Input.GetButtonDown("Attack") && myStateMachine.CanKick())
-            {
-                myStateMachine.ChangeState(PlayerStateMachine.eStates.AirKick);
-            }
-            else if (myStateMachine.GroundIsSlippy())
+            if (myStateMachine.GroundIsSlippy())
             {
                 myStateMachine.ChangeState(PlayerStateMachine.eStates.Slide);
             }

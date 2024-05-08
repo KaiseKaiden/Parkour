@@ -65,10 +65,6 @@ public class PlayerRunningState : State
         {
             myStateMachine.ChangeState(PlayerStateMachine.eStates.Slide);
         }
-        else if (Input.GetButtonDown("Attack") && myStateMachine.CanKick())
-        {
-            myStateMachine.ChangeState(PlayerStateMachine.eStates.AirKick);
-        }
         else if (Input.GetButtonDown("Jump"))
         {
             if (input.y > 0.0f && myStateMachine.IsHeadingForObstacle())

@@ -38,9 +38,6 @@ public class PlayerIdleState : State
         myStateMachine.GetPlayerAnimator().SetFloat("speed", 0.0f);
 
         // Transition To State
-        GameObject obj;
-        myStateMachine.EnemyIsInRange(out obj);
-
         if (myStateMachine.GroundIsSlippy())
         {
             myStateMachine.ChangeState(PlayerStateMachine.eStates.Slide);
@@ -48,10 +45,6 @@ public class PlayerIdleState : State
         else if (!myStateMachine.IsGrounded())
         {
             myStateMachine.ChangeState(PlayerStateMachine.eStates.CayoteFalling);
-        }
-        else if (Input.GetButtonDown("Attack") && myStateMachine.CanKick())
-        {
-            myStateMachine.ChangeState(PlayerStateMachine.eStates.AirKick);
         }
         else if (input.magnitude > 0.2f)
         {

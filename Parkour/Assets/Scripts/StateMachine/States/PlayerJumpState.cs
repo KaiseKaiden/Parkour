@@ -40,19 +40,8 @@ public class PlayerJumpState : State
         // Transitions
         Vector2 input = myStateMachine.GetInput();
 
-        GameObject obj;
-        myStateMachine.EnemyIsInRange(out obj);
-        
         RaycastHit hit;
-        if (Input.GetButtonDown("Jump") && myStateMachine.CanDoubleJump())
-        {
-            myStateMachine.ChangeState(PlayerStateMachine.eStates.DoubleJump);
-        }
-        else if (Input.GetButtonDown("Attack") && myStateMachine.CanKick())
-        {
-            myStateMachine.ChangeState(PlayerStateMachine.eStates.AirKick);
-        }
-        else if (myStateMachine.GroundIsSlippy())
+        if (myStateMachine.GroundIsSlippy())
         {
             myStateMachine.ChangeState(PlayerStateMachine.eStates.Slide);
         }

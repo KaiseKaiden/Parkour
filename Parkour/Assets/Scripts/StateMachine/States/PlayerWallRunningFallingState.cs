@@ -83,16 +83,8 @@ public class PlayerWallRunningFallingState : State
         }
         else
         {
-            GameObject obj;
-            myStateMachine.EnemyIsInRange(out obj);
-
-            if (Input.GetButtonDown("Attack") && myStateMachine.CanKick())
+            if (myStateMachine.GetCurrentVelocity().y > -10.0f && !Input.GetButton("Crouch"))
             {
-                myStateMachine.ChangeState(PlayerStateMachine.eStates.AirKick);
-            }
-            else if (myStateMachine.GetCurrentVelocity().y > -10.0f && !Input.GetButton("Crouch"))
-            {
-                RaycastHit hit;
                 if (myStateMachine.GetEdgeHit() && Vector3.Dot(myStateMachine.transform.forward, myStateMachine.GetCurrentVelocityXZ()) > 0)
                 {
                     myStateMachine.ChangeState(PlayerStateMachine.eStates.LedgeClimb);

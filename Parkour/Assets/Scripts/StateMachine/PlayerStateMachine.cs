@@ -7,9 +7,6 @@ public class PlayerStateMachine : Observer
     const float myGravity = 10.0f;
     const float myMaxVaultDistance = 4.5f;
 
-    bool myCanKick = false;
-    bool myCanDoubleJump = false;
-
     public enum eStates : int
     {
         Idle,
@@ -35,11 +32,6 @@ public class PlayerStateMachine : Observer
         Vault,
 
         LedgeClimb,
-        AirKick,
-        KickBoost,
-
-
-        DoubleJump,
 
 
         Count
@@ -122,11 +114,6 @@ public class PlayerStateMachine : Observer
         myCachedStates.Add(new PlayerVaultState());
 
         myCachedStates.Add(new PlayerLedgeClimbState());
-        myCachedStates.Add(new PlayerAirKick());
-        myCachedStates.Add(new PlayerKickBoost());
-
-
-        myCachedStates.Add(new PlayerDoubleJumpState());
 
         for (int i = 0; i < myCachedStates.Count; i++)
         {
@@ -144,6 +131,7 @@ public class PlayerStateMachine : Observer
         PostMaster.Instance.Subscribe(eMessage.EdgeClimb, this);
         PostMaster.Instance.Subscribe(eMessage.CheckpointPosition, this);
         PostMaster.Instance.Subscribe(eMessage.CheckpointOrientation, this);
+        PostMaster.Instance.Subscribe(eMessage.Respawn, this);
     }
 
     void GroundPlayer()
@@ -157,18 +145,6 @@ public class PlayerStateMachine : Observer
 
     void Update()
     {
-        ResetEnemyOutline();
-
-        if (!myCanKick) // Reset Kick
-        {
-            myCanKick = IsGrounded();
-        }
-
-        if (!myCanDoubleJump)
-        {
-            myCanDoubleJump = IsGrounded();
-        }
-
         if (myCurrentState != null) myCurrentState.Tick();
 
         // Locomotion
@@ -189,12 +165,13 @@ public class PlayerStateMachine : Observer
         Quaternion rotation = Quaternion.Euler(new Vector3(myDesiredBodyXrot, 0.0f, 0.0f));
         myBodyTransform.transform.localRotation = Quaternion.Lerp(myBodyTransform.transform.localRotation, rotation, 5.0f * Time.deltaTime);
 
-        if (transform.position.y < 45.0f) Respawn();
         GetPlayerAnimator().SetBool("isGrounded", IsGrounded());
     }
 
     public void Respawn()
     {
+        myCharacterController.enabled = false;
+
         transform.position = mySpawnPosition;
         transform.eulerAngles = mySpawnOrientation;
         myVelocity = Vector3.zero;
@@ -205,8 +182,7 @@ public class PlayerStateMachine : Observer
         myLookRotX = 0.0f;
         myCameraTransform.localEulerAngles = Vector3.zero;
 
-        Message message = new Message(eMessage.Respawn, Vector3.zero);
-        PostMaster.Instance.SendMessage(message);
+        myCharacterController.enabled = true;
     }
 
     override public void Recive(Message aMsg)
@@ -222,6 +198,10 @@ public class PlayerStateMachine : Observer
         else if (aMsg.GetMsg() == eMessage.CheckpointOrientation)
         {
             mySpawnOrientation = aMsg.GetVector3();
+        }
+        else if (aMsg.GetMsg() == eMessage.Respawn)
+        {
+            Respawn();
         }
     }
 
@@ -250,6 +230,11 @@ public class PlayerStateMachine : Observer
 
     public void ChangeState(eStates aState)
     {
+        if (aState == eStates.Idle)
+        {
+            Debug.Log("IDLE?");
+        }
+
         myPreviusStateEnum = myCurrentStateEnum;
         myCurrentStateEnum = aState;
 
@@ -730,88 +715,6 @@ public class PlayerStateMachine : Observer
     public void AnimDone()
     {
         myCachedStates[(int)myCurrentStateEnum].AnimDone();
-    }
-
-    public bool CanKick()
-    {
-        return myCanKick;
-    }
-
-    public void SetCanKick(bool aValue)
-    {
-        myCanKick = aValue;
-    }
-
-    public bool CanDoubleJump()
-    {
-        return myCanDoubleJump;
-    }
-
-    public void SetCanDoubleJump(bool aValue)
-    {
-        myCanDoubleJump = aValue;
-    }
-
-    void ResetEnemyOutline()
-    {
-        GameObject[] enemies = GameObject.FindGameObjectsWithTag("Enemy");
-        foreach (GameObject e in enemies)
-        {
-            Outline outline = e.GetComponent<Outline>();
-            if (outline != null)
-            {
-                outline.enabled = false;
-            }
-        }
-    }
-
-    public bool EnemyIsInRange(out GameObject aGameObject)
-    {
-        GameObject[] enemies = GameObject.FindGameObjectsWithTag("Enemy");
-
-        const float range = 7.5f;
-
-        float closestRange = range;
-        float bestDirection = 0.2f;
-
-        GameObject closestEnemie = null;
-
-        foreach(GameObject e in enemies)
-        {
-            if (!e.GetComponent<Enemy>().IsAlive())
-            {
-                continue;
-            }
-
-            Vector3 direction = ((e.transform.position + Vector3.up) - transform.position);
-            if (direction.magnitude < range)
-            {
-                if (!Physics.Linecast(GetCameraTransform().position, e.transform.position + Vector3.up, myWhatIsGround))
-                {
-                    if (direction.magnitude < closestRange)
-                    {
-                        //closestRange = direction.magnitude;
-
-                        if (Vector3.Dot(direction.normalized, GetCameraTransform().forward) > bestDirection)
-                        {
-                            bestDirection = Vector3.Dot(direction.normalized, GetCameraTransform().forward);
-                            closestEnemie = e;
-                        }
-                    }
-                }
-            }
-        }
-
-        if (closestEnemie != null)
-        {
-            closestEnemie.GetComponent<Outline>().enabled = true;
-            aGameObject = closestEnemie;
-
-            return true;
-        }
-
-        aGameObject = null;
-        return false;
     }
 
     public float SphereCastStartToMiddleDistance(Vector3 aStart, Vector3 aHitPos)
