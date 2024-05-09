@@ -4,8 +4,11 @@ using UnityEngine;
 
 public class PlayerIdleState : State
 {
+    float myActiveTime = 0.0f;
+
     public override void OnEnter()
     {
+        myActiveTime = 0.0f;
         myStateMachine.SetDesiredFOV(90.0f);
 
         RaycastHit hit;
@@ -24,6 +27,9 @@ public class PlayerIdleState : State
 
     public override void Tick()
     {
+        myActiveTime += Time.deltaTime;
+        myStateMachine.RemoveFlowPoint(Time.deltaTime * myActiveTime * 10.0f);
+
         myStateMachine.LookAround();
         if (!myStateMachine.IsGrounded())
         {

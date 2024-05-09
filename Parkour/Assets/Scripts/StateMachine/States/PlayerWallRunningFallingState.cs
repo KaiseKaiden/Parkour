@@ -4,39 +4,39 @@ using UnityEngine;
 
 public class PlayerWallRunningFallingState : State
 {
+    float myActiveTime;
+
     const float myAcceleration = 15.0f;
     const float myMaxSpeed = 7.5f;
 
     Vector2 myCurrentXZForce;
 
-    //bool myCanWallRun;
-
     public override void OnEnter()
     {
+        myActiveTime = 0.0f;
+
         myCurrentXZForce.x = myStateMachine.GetCurrentVelocityXZ().x;
         myCurrentXZForce.y = myStateMachine.GetCurrentVelocityXZ().z;
 
-        if (myStateMachine.GetPreviusState() == PlayerStateMachine.eStates.WallTurn)
-        {
-            myStateMachine.GetPlayerAnimator().SetTrigger("fallFrom180");
-        }
-        else
-        {
-            myStateMachine.GetPlayerAnimator().SetTrigger("fall");
-        }
+        myStateMachine.GetPlayerAnimator().SetTrigger("fall");
+
+        myActiveTime = 1.0f;
+        myStateMachine.RemoveFlowPoint(10.0f);
     }
 
     public override void OnExit()
     {
         myStateMachine.SetSpeedLinesActive(false);
 
-        myStateMachine.GetPlayerAnimator().ResetTrigger("fallFrom180");
         myStateMachine.GetPlayerAnimator().ResetTrigger("fall");
     }
 
     public override void Tick()
     {
         myStateMachine.LookAround();
+
+        myActiveTime += Time.deltaTime;
+        myStateMachine.RemoveFlowPoint(Time.deltaTime * Mathf.Clamp01(myActiveTime) * 50.0f);
 
         Movement();
         Fall();

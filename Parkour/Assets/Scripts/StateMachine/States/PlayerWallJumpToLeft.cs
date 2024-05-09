@@ -14,6 +14,8 @@ public class PlayerWallJumpToLeft : State
 
         myStateMachine.GetPlayerAnimator().SetTrigger("jump");
         AudioManager.Instance.PlaySound(AudioManager.eSound.Jump, myStateMachine.transform.position);
+
+        myStateMachine.RemoveFlowPoint(5.0f);
     }
 
     public override void OnExit()

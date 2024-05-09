@@ -25,8 +25,6 @@ public class PlayerStateMachine : Observer
         WallRunH,
         WallJumpRight,
         WallJumpLeft,
-        WallTurn,
-        WallJump,
         WallRunFall,
 
         Vault,
@@ -67,7 +65,6 @@ public class PlayerStateMachine : Observer
 
     Vector3 myDesiredAngle;
 
-    float myDesiredHeight;
     float myCurrentHeight;
     float myDesiredFOV;
     float myScreenShakeIntensity;
@@ -78,6 +75,35 @@ public class PlayerStateMachine : Observer
 
     [SerializeField] GameObject myLandParticle;
     [SerializeField] ParticleSystem mySpeedLinesParticleSystem;
+
+    float myFlow;
+    const float myMaxFlow = 100.0f;
+    [SerializeField] FlowBar myFlowBar;
+    public FlowBar GetFlowBar()
+    {
+        return myFlowBar;
+    }
+
+    public float GetFlowPercentage()
+    {
+        return (myFlow / myMaxFlow);
+    }
+
+    public void AddFlowPoint(float aValue)
+    {
+        myFlow += aValue;
+        myFlow = Mathf.Clamp(myFlow, 0.0f, myMaxFlow);
+
+        GetFlowBar().SetFlowPercentage(myFlow / myMaxFlow);
+    }
+
+    public void RemoveFlowPoint(float aValue)
+    {
+        myFlow -= aValue;
+        myFlow = Mathf.Clamp(myFlow, 0.0f, myMaxFlow);
+
+        GetFlowBar().SetFlowPercentage(myFlow / myMaxFlow);
+    }
 
     void Start()
     {
@@ -107,8 +133,6 @@ public class PlayerStateMachine : Observer
         myCachedStates.Add(new PlayerHorizontalWallRunningState());
         myCachedStates.Add(new PlayerWallJumpToRight());
         myCachedStates.Add(new PlayerWallJumpToLeft());
-        myCachedStates.Add(new PlayerWallTurning());
-        myCachedStates.Add(new PlayerWallJump());
         myCachedStates.Add(new PlayerWallRunningFallingState());
 
         myCachedStates.Add(new PlayerVaultState());
@@ -125,7 +149,6 @@ public class PlayerStateMachine : Observer
         // Stats
         myDesiredFOV = Camera.main.fieldOfView;
         myStartLocalCameraPosition = myCameraTransform.localPosition;
-        myDesiredHeight = 2.0f;
         myCurrentHeight = 2.0f;
 
         PostMaster.Instance.Subscribe(eMessage.EdgeClimb, this);
@@ -230,11 +253,6 @@ public class PlayerStateMachine : Observer
 
     public void ChangeState(eStates aState)
     {
-        if (aState == eStates.Idle)
-        {
-            Debug.Log("IDLE?");
-        }
-
         myPreviusStateEnum = myCurrentStateEnum;
         myCurrentStateEnum = aState;
 
@@ -565,16 +583,9 @@ public class PlayerStateMachine : Observer
         myScreenShakeIntensity = aIntensity;
     }
 
-    public void SetDesiredCameraHeight(float aHeight)
-    {
-        aHeight = Mathf.Clamp(aHeight, 0.6f, 2.0f);
-        myDesiredHeight = aHeight;
-    }
-
     public void SetCameraHeight(float aHeight)
     {
         aHeight = Mathf.Clamp(aHeight, 0.6f, 2.0f);
-        myDesiredHeight = aHeight;
         myCurrentHeight = aHeight;
 
         float scalar = myCurrentHeight * 0.5f;
@@ -727,5 +738,22 @@ public class PlayerStateMachine : Observer
         float b2 = Mathf.Sqrt(Mathf.Pow(c2, 2) - Mathf.Pow(a, 2));
 
         return (b - b2);
+    }
+
+    // Todo: Use This Method For Determining Wallclimbing later
+    private void OnDrawGizmos()
+    {
+        float maxClimbHeight = 10.0f;
+
+        RaycastHit sideHit;
+        if (Physics.Raycast(transform.position + Vector3.up * 0.5f, transform.forward, out sideHit, 2.0f) && !Physics.Raycast(transform.position + Vector3.up * maxClimbHeight, transform.forward, 2.0f))
+        {
+            RaycastHit heightHit;
+            if (Physics.Raycast(transform.position + transform.forward * 2.0f + Vector3.up * maxClimbHeight, Vector3.down, out heightHit))
+            {
+                Gizmos.color = Color.red;
+                Gizmos.DrawCube(new Vector3(sideHit.point.x, heightHit.point.y, sideHit.point.z), new Vector3(0.2f, 0.2f, 0.2f));
+            }
+        }
     }
 }

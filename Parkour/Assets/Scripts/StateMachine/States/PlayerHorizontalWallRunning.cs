@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class PlayerHorizontalWallRunningState : State
 {
+    float myActiveTime;
+
     const float myRunningSpeed = 7.5f;
     const float myJumpForce = 6.5f;
     Vector3 myVelocity;
@@ -15,6 +17,9 @@ public class PlayerHorizontalWallRunningState : State
 
     public override void OnEnter()
     {
+        myActiveTime = 0.0f;
+        myStateMachine.AddFlowPoint(10.0f);
+
         myStateMachine.SetSpeedLinesActive(true);
         myTimeAfterLeavingEdge = 0.0f;
 
@@ -79,6 +84,9 @@ public class PlayerHorizontalWallRunningState : State
 
     void Move()
     {
+        myActiveTime += Time.deltaTime;
+        //myStateMachine.RemoveFlowPoint(Time.deltaTime * myActiveTime * 10.0f);
+
         myVelocity.y -= 5.0f * Time.deltaTime;
         myStateMachine.SetVelocityXYZ(myVelocity.x, myVelocity.y, myVelocity.z);
 

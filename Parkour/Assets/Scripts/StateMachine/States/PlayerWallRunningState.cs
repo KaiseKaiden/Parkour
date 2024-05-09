@@ -62,10 +62,6 @@ public class PlayerWallRunningState : State
         {
             myStateMachine.ChangeState(PlayerStateMachine.eStates.LedgeClimb);
         }
-        else if (Input.GetKeyDown(KeyCode.Q))
-        {
-            myStateMachine.ChangeState(PlayerStateMachine.eStates.WallTurn);
-        }
         else if (myStateMachine.HasHitHead())
         {
             myStateMachine.SetGroundedYVelocity();

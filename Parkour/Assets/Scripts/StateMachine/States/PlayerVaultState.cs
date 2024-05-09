@@ -21,6 +21,8 @@ public class PlayerVaultState : State
 
     public override void OnEnter()
     {
+        myStateMachine.AddFlowPoint(10.0f);
+
         myStateMachine.SetGroundedYVelocity();
 
         myStateMachine.GetCharacterController().enabled = false;

@@ -22,6 +22,7 @@ public class PlayerRunningState : State
     {
         myStateMachine.LookAround();
 
+        ManageFlow();
         Move();
         Transitions();
     }
@@ -83,6 +84,18 @@ public class PlayerRunningState : State
         else if (Input.GetButtonDown("Crouch") && input.y > 0.75f)
         {
             myStateMachine.ChangeState(PlayerStateMachine.eStates.Slide);
+        }
+    }
+
+    void ManageFlow()
+    {
+        if (myStateMachine.GetFlowPercentage() < 0.33f)
+        {
+            myStateMachine.AddFlowPoint(10.0f * Time.deltaTime);
+        }
+        else
+        {
+            myStateMachine.RemoveFlowPoint(0.5f * Time.deltaTime);
         }
     }
 }

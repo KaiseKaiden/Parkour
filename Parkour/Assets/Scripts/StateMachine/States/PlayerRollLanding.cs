@@ -37,6 +37,8 @@ public class PlayerRollLanding : State
         myStateMachine.GetPlayerAnimator().SetTrigger("rolling");
 
         myStateMachine.CreateLandParticle();
+
+        myStateMachine.AddFlowPoint(5.0f);
     }
 
     public override void OnExit()

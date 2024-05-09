@@ -14,9 +14,6 @@ public class FlowBar : MonoBehaviour
 
     void Update()
     {
-        myFlow += Time.deltaTime * 0.05f;
-        myFlow = Mathf.Clamp01(myFlow);
-
         myFlowStage1.enabled = false;
         myFlowStage2.enabled = false;
         myFlowStage3.enabled = false;
@@ -26,5 +23,10 @@ public class FlowBar : MonoBehaviour
         if (myFlow > 0.25f) myFlowStage1.enabled = true;
         if (myFlow > 0.50f) myFlowStage2.enabled = true;
         if (myFlow > 0.75f) myFlowStage3.enabled = true;
+    }
+
+    public void SetFlowPercentage(float aValue01)
+    {
+        myFlow = Mathf.Clamp01(aValue01);
     }
 }

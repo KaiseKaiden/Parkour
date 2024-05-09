@@ -18,6 +18,8 @@ public class PlayerJumpState : State
 
         AudioManager.Instance.PlaySound(AudioManager.eSound.Jump, myStateMachine.transform.position);
         myStateMachine.GetPlayerAnimator().SetTrigger("jump");
+
+        myStateMachine.AddFlowPoint(2.5f);
     }
 
     public override void OnExit()
