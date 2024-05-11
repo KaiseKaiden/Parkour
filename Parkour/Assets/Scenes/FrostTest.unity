@@ -8714,6 +8714,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7706059960309531277, guid: 99bc10164c5d8a447a04e3d751d38ea3, type: 3}
+      propertyPath: myFlowBar
+      value: 
+      objectReference: {fileID: 1812081144}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -18265,6 +18269,17 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 5266531313914999211, guid: d236dcfc80a0b094093ec22ce9c7ffc0, type: 3}
   m_PrefabInstance: {fileID: 1795215944}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1812081144 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4691013411133986557, guid: c21dd2287007a8040b4f880e566353d6, type: 3}
+  m_PrefabInstance: {fileID: 120591174}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cb857643504cfb347822a6f1477713db, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!4 &1837583953 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 5266531313914999211, guid: d236dcfc80a0b094093ec22ce9c7ffc0, type: 3}

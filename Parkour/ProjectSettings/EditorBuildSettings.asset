@@ -8,4 +8,13 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/FransTest.unity
     guid: 6c524a492ce27f24da0fe8dd73d94272
+  - enabled: 1
+    path: Assets/Scenes/Tracks/Track1.unity
+    guid: 2208c35b75c320f4c8a690bf0416674a
+  - enabled: 1
+    path: Assets/Scenes/Tracks/Track2.unity
+    guid: 646446063b5190348a37053f9dc9ba3f
+  - enabled: 1
+    path: Assets/Scenes/Tracks/Track3.unity
+    guid: 633cbcb28563f844890cc17a0eec897d
   m_configObjects: {}
