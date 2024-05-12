@@ -9,6 +9,9 @@ public class PlayerWallRunningState : State
     Vector3 myVelocity;
     Vector3 myDeciredAngle;
 
+    float myMaxHeight = 6.0f;
+    Vector3 myDeciredPosition;
+
     public override void OnEnter()
     {
         RaycastHit hit;

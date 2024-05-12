@@ -8,8 +8,12 @@ public class PlayerWallJumpToLeft : State
 
     public override void OnEnter()
     {
-        Vector3 vel = myStateMachine.GetCurrentVelocity() + myStateMachine.transform.forward * myJumpForce;
+        /*Vector3 vel = myStateMachine.GetCurrentVelocity() + myStateMachine.transform.forward * myJumpForce;
         vel.y = myJumpForce * 0.5f;
+        myStateMachine.SetVelocityXYZ(vel.x, vel.y, vel.z);*/
+
+        Vector3 vel = myStateMachine.GetCurrentVelocity() - myStateMachine.transform.right * myJumpForce;
+        vel.y = myJumpForce;
         myStateMachine.SetVelocityXYZ(vel.x, vel.y, vel.z);
 
         myStateMachine.GetPlayerAnimator().SetTrigger("jump");
@@ -36,7 +40,15 @@ public class PlayerWallJumpToLeft : State
 
         // Transitions
         RaycastHit hit;
-        if (myStateMachine.GetEdgeHit())
+        if (myStateMachine.GroundIsSlippy())
+        {
+            myStateMachine.ChangeState(PlayerStateMachine.eStates.Slide);
+        }
+        else if (myStateMachine.GetCharacterController().isGrounded)
+        {
+            myStateMachine.ChangeState(PlayerStateMachine.eStates.IdleLand);
+        }
+        else if (myStateMachine.GetEdgeHit())
         {
             myStateMachine.ChangeState(PlayerStateMachine.eStates.LedgeClimb);
         }

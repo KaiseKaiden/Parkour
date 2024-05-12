@@ -22,7 +22,10 @@ public class PlayerFallingState : State
             myCanWallRun = false;
         }
 
-        myStateMachine.GetPlayerAnimator().SetTrigger("fall");
+        if (myStateMachine.GetPreviusState() != PlayerStateMachine.eStates.CayoteFalling)
+        {
+            myStateMachine.GetPlayerAnimator().SetTrigger("fall");
+        }
     }
 
     public override void OnExit()
@@ -69,6 +72,10 @@ public class PlayerFallingState : State
                 {
                     myStateMachine.ChangeState(PlayerStateMachine.eStates.HardLand);
                 }
+            }
+            else if (myStateMachine.GetCurrentVelocity().y < -7.0f && Input.GetButton("Crouch"))
+            {
+                myStateMachine.ChangeState(PlayerStateMachine.eStates.Roll);
             }
             else
             {

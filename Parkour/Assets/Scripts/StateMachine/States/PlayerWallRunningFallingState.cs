@@ -69,6 +69,10 @@ public class PlayerWallRunningFallingState : State
                     myStateMachine.ChangeState(PlayerStateMachine.eStates.HardLand);
                 }
             }
+            else if (myStateMachine.GetCurrentVelocity().y < -7.0f && Input.GetButton("Crouch"))
+            {
+                myStateMachine.ChangeState(PlayerStateMachine.eStates.Roll);
+            }
             else
             {
                 if (Input.GetButton("Crouch"))

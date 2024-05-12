@@ -36,7 +36,15 @@ public class PlayerWallJumpToRight : State
 
         // Transitions
         RaycastHit hit;
-        if (myStateMachine.GetEdgeHit())
+        if (myStateMachine.GroundIsSlippy())
+        {
+            myStateMachine.ChangeState(PlayerStateMachine.eStates.Slide);
+        }
+        else if (myStateMachine.GetCharacterController().isGrounded)
+        {
+            myStateMachine.ChangeState(PlayerStateMachine.eStates.IdleLand);
+        }
+        else if (myStateMachine.GetEdgeHit())
         {
             myStateMachine.ChangeState(PlayerStateMachine.eStates.LedgeClimb);
         }

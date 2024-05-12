@@ -126,6 +126,20 @@ public class PlayerStateMachine : Observer
 
     void Start()
     {
+        GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
+        if (players.Length > 1)
+        {
+            foreach(GameObject p in players)
+            {
+                if (p != gameObject)
+                {
+                    p.GetComponent<PlayerStateMachine>().SetNewSceneInit(transform);
+                }
+            }
+            Destroy(gameObject);
+        }
+        DontDestroyOnLoad(gameObject);
+
         GroundPlayer();
 
         mySpawnPosition = transform.position;
@@ -210,6 +224,35 @@ public class PlayerStateMachine : Observer
         myBodyTransform.transform.localRotation = Quaternion.Lerp(myBodyTransform.transform.localRotation, rotation, 5.0f * Time.deltaTime);
 
         GetPlayerAnimator().SetBool("isGrounded", IsGrounded());
+    }
+
+    public void SetNewSceneInit(Transform aTransform)
+    {
+        /*{
+            //Vector3 relativeVelocity = new Vector3(aTransform.right.x * myVelocity.x, aTransform.right.y * myVelocity.y, aTransform.right.z * myVelocity.z) +
+            //    new Vector3(aTransform.up.x * myVelocity.x, aTransform.up.y * myVelocity.y, aTransform.up.z * myVelocity.z) +
+            //    new Vector3(aTransform.forward.x * myVelocity.x, aTransform.forward.y * myVelocity.y, aTransform.forward.z * myVelocity.z);
+            float angle = (transform.eulerAngles.y + Vector3.Angle(aTransform.forward, transform.forward)) * Mathf.Deg2Rad;
+            Vector3 relativeVelocity = new Vector3(myVelocity.x * Mathf.Cos(angle), myVelocity.y, myVelocity.x * Mathf.Sin(angle));
+
+            Matrix4x4 mat = new Matrix4x4();
+            mat.SetTRS(Vector3.zero, transform.rotation, Vector3.one);
+            relativeVelocity = mat.MultiplyVector(myVelocity);
+
+            myVelocity = relativeVelocity;// transform.right * relativeVelocity.x + transform.up * relativeVelocity.y + transform.forward * relativeVelocity.z;
+        }*/
+
+        myCharacterController.enabled = false;
+
+        mySpawnPosition = aTransform.position;
+        mySpawnOrientation = aTransform.eulerAngles;
+
+        transform.position = aTransform.position;
+        transform.eulerAngles = aTransform.eulerAngles;
+
+        myCharacterController.enabled = true;
+
+        myFlowBar = GameObject.FindGameObjectWithTag("FlowBar").GetComponent<FlowBar>();
     }
 
     public void Respawn()
