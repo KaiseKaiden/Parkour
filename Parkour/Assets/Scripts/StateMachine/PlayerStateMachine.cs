@@ -77,8 +77,20 @@ public class PlayerStateMachine : Observer
     [SerializeField] ParticleSystem mySpeedLinesParticleSystem;
 
     float myFlow;
+    float myFlowDecreaser;
     const float myMaxFlow = 100.0f;
-    [SerializeField] FlowBar myFlowBar;
+    FlowBar myFlowBar;
+
+    public void SetFlowDecreaser(float aValue)
+    {
+        myFlowDecreaser = aValue;
+    }
+
+    public float GetFlowDecreaser()
+    {
+        return myFlowDecreaser;
+    }
+
     public FlowBar GetFlowBar()
     {
         return myFlowBar;
@@ -89,8 +101,15 @@ public class PlayerStateMachine : Observer
         return (myFlow / myMaxFlow);
     }
 
+    public float GetFlowStage()
+    {
+        return Mathf.Clamp((int)(GetFlowPercentage() / 0.25f), 0.0f, 3.0f);
+    }
+
     public void AddFlowPoint(float aValue)
     {
+        SetFlowDecreaser(0.0f);
+
         myFlow += aValue;
         myFlow = Mathf.Clamp(myFlow, 0.0f, myMaxFlow);
 
@@ -150,6 +169,8 @@ public class PlayerStateMachine : Observer
         myDesiredFOV = Camera.main.fieldOfView;
         myStartLocalCameraPosition = myCameraTransform.localPosition;
         myCurrentHeight = 2.0f;
+
+        myFlowBar = GameObject.FindGameObjectWithTag("FlowBar").GetComponent<FlowBar>();
 
         PostMaster.Instance.Subscribe(eMessage.EdgeClimb, this);
         PostMaster.Instance.Subscribe(eMessage.CheckpointPosition, this);

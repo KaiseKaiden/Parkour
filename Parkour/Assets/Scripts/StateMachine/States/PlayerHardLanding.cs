@@ -4,8 +4,6 @@ using UnityEngine;
 
 public class PlayerHardLanding : State
 {
-    float myActiveTime = 0.0f;
-
     public override void OnEnter()
     {
         myStateMachine.SetVelocityXYZ(0.0f, 0.0f, 0.0f);
@@ -13,7 +11,6 @@ public class PlayerHardLanding : State
         myStateMachine.GetPlayerAnimator().SetTrigger("hardLand");
 
         myStateMachine.RemoveFlowPoint(20.0f);
-        myActiveTime = 0.0f;
     }
 
     public override void OnExit()
@@ -23,8 +20,8 @@ public class PlayerHardLanding : State
 
     public override void Tick()
     {
-        myActiveTime += Time.deltaTime;
-        myStateMachine.RemoveFlowPoint(Time.deltaTime * myActiveTime * 10.0f);
+        myStateMachine.SetFlowDecreaser(myStateMachine.GetFlowDecreaser() + Time.deltaTime);
+        myStateMachine.RemoveFlowPoint(Time.deltaTime * myStateMachine.GetFlowDecreaser() * 10.0f);
 
         myStateMachine.AdjustCameraRotation();
     }

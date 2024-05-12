@@ -4,8 +4,6 @@ using UnityEngine;
 
 public class PlayerFallingState : State
 {
-    float myActiveTime;
-
     const float myAcceleration = 15.0f;
     const float myMaxSpeed = 7.5f;
 
@@ -25,8 +23,6 @@ public class PlayerFallingState : State
         }
 
         myStateMachine.GetPlayerAnimator().SetTrigger("fall");
-
-        myActiveTime = 0.0f;
     }
 
     public override void OnExit()
@@ -38,8 +34,8 @@ public class PlayerFallingState : State
 
     public override void Tick()
     {
-        myActiveTime += Time.deltaTime;
-        myStateMachine.RemoveFlowPoint(Time.deltaTime * myActiveTime * 10.0f);
+        myStateMachine.SetFlowDecreaser(myStateMachine.GetFlowDecreaser() + Time.deltaTime);
+        myStateMachine.RemoveFlowPoint(Time.deltaTime * myStateMachine.GetFlowDecreaser() * 5.0f);
 
         myStateMachine.LookAround();
 

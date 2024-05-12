@@ -677,7 +677,7 @@ GameObject:
   - component: {fileID: 4691013411133986557}
   m_Layer: 5
   m_Name: Flow Indicator
-  m_TagString: Untagged
+  m_TagString: FlowBar
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -725,6 +725,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cb857643504cfb347822a6f1477713db, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  myFlowIncreaseMultiplier: 5
   myFlowbar: {fileID: 5482883814938955815}
   myFlowStage1: {fileID: 4164030508889377913}
   myFlowStage2: {fileID: 129978565172910393}

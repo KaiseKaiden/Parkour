@@ -6,6 +6,8 @@ using UnityEngine;
 public class FlowBar : MonoBehaviour
 {
     float myFlow = 0.0f;
+    float myVisualFlow = 0.0f;
+    [SerializeField] float myFlowIncreaseMultiplier = 5.0f;
 
     [SerializeField] Image myFlowbar;
     [SerializeField] Image myFlowStage1;
@@ -18,7 +20,8 @@ public class FlowBar : MonoBehaviour
         myFlowStage2.enabled = false;
         myFlowStage3.enabled = false;
 
-        myFlowbar.fillAmount = myFlow;
+        myVisualFlow = Mathf.Lerp(myVisualFlow, myFlow, myFlowIncreaseMultiplier * Time.deltaTime);
+        myFlowbar.fillAmount = myVisualFlow;
 
         if (myFlow > 0.25f) myFlowStage1.enabled = true;
         if (myFlow > 0.50f) myFlowStage2.enabled = true;
