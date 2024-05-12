@@ -2773,6 +2773,22 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f4a877d89f4578747a8e0f59b654e213, type: 3}
+--- !u!114 &219348824 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 7706059960309531277, guid: 99bc10164c5d8a447a04e3d751d38ea3, type: 3}
+  m_PrefabInstance: {fileID: 1576275740505794930}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0e2f5a856428d2e4998cc0687fe36e06, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!54 &219348826 stripped
+Rigidbody:
+  m_CorrespondingSourceObject: {fileID: 9131588992945938310, guid: 99bc10164c5d8a447a04e3d751d38ea3, type: 3}
+  m_PrefabInstance: {fileID: 1576275740505794930}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &233018175
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -4639,16 +4655,20 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 485961200648616940, guid: bd8ea0f351866994a919e3585370e3a7, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 1.9025
+      objectReference: {fileID: 0}
+    - target: {fileID: 485961200648616940, guid: bd8ea0f351866994a919e3585370e3a7, type: 3}
       propertyPath: m_LocalPosition.x
       value: 20.55253
       objectReference: {fileID: 0}
     - target: {fileID: 485961200648616940, guid: bd8ea0f351866994a919e3585370e3a7, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 63.208282
+      value: 63.15576
       objectReference: {fileID: 0}
     - target: {fileID: 485961200648616940, guid: bd8ea0f351866994a919e3585370e3a7, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 228.44356
+      value: 210
       objectReference: {fileID: 0}
     - target: {fileID: 485961200648616940, guid: bd8ea0f351866994a919e3585370e3a7, type: 3}
       propertyPath: m_LocalRotation.w
@@ -4682,6 +4702,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: LoadRandomScene
       objectReference: {fileID: 0}
+    - target: {fileID: 4983618954291187710, guid: bd8ea0f351866994a919e3585370e3a7, type: 3}
+      propertyPath: playerRigidbody
+      value: 
+      objectReference: {fileID: 219348826}
+    - target: {fileID: 4983618954291187710, guid: bd8ea0f351866994a919e3585370e3a7, type: 3}
+      propertyPath: playerStateMachine
+      value: 
+      objectReference: {fileID: 219348824}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
