@@ -346,13 +346,13 @@ public class PlayerStateMachine : Observer
     public bool IsGrounded()
     {
         //return myCharacterController.isGrounded;
-        return Physics.OverlapSphere(transform.position, GetCharacterController().radius, myWhatIsGround).Length > 0;
+        return Physics.OverlapSphere(transform.position, GetCharacterController().radius, myWhatIsGround, QueryTriggerInteraction.Ignore).Length > 0;
         //return Physics.OverlapSphere(transform.position + Vector3.down * 0.1f, GetCharacterController().radius - 0.1f, myWhatIsGround).Length > 0;
     }
 
     public bool HasHitHead()
     {
-        return Physics.OverlapSphere(transform.position + Vector3.up * 1.8f, GetCharacterController().radius - 0.1f, myWhatIsWall).Length > 0;
+        return Physics.OverlapSphere(transform.position + Vector3.up * 1.8f, GetCharacterController().radius - 0.1f, myWhatIsWall, QueryTriggerInteraction.Ignore).Length > 0;
     }
 
     public Animator GetPlayerAnimator()
@@ -425,7 +425,7 @@ public class PlayerStateMachine : Observer
 
         Vector3 forward = transform.forward;
 
-        if (Physics.Raycast(transform.position + Vector3.up, forward, out aOutHit, 1.0f, GetWallLayerMask()))
+        if (Physics.Raycast(transform.position + Vector3.up, forward, out aOutHit, 1.0f, GetWallLayerMask(), QueryTriggerInteraction.Ignore))
         {
             return true;
         }
@@ -441,7 +441,7 @@ public class PlayerStateMachine : Observer
         Vector3 left = transform.forward - transform.right;
         left.Normalize();
 
-        if (Physics.Raycast(transform.position + Vector3.up, left, out aOutHit, 1.5f, GetWallLayerMask()))
+        if (Physics.Raycast(transform.position + Vector3.up, left, out aOutHit, 1.5f, GetWallLayerMask(), QueryTriggerInteraction.Ignore))
         {
             return true;
         }
@@ -457,7 +457,7 @@ public class PlayerStateMachine : Observer
         Vector3 right = transform.forward + transform.right;
         right.Normalize();
 
-        if (Physics.Raycast(transform.position + Vector3.up, right, out aOutHit, 1.5f, GetWallLayerMask()))
+        if (Physics.Raycast(transform.position + Vector3.up, right, out aOutHit, 1.5f, GetWallLayerMask(), QueryTriggerInteraction.Ignore))
         {
             return true;
         }
@@ -472,7 +472,7 @@ public class PlayerStateMachine : Observer
 
         Vector3 left = -transform.right;
 
-        if (Physics.Raycast(transform.position + Vector3.up, left, out aOutHit, 1.0f, GetWallLayerMask()))
+        if (Physics.Raycast(transform.position + Vector3.up, left, out aOutHit, 1.0f, GetWallLayerMask(), QueryTriggerInteraction.Ignore))
         {
             return true;
         }
@@ -487,7 +487,7 @@ public class PlayerStateMachine : Observer
 
         Vector3 right = transform.right;
 
-        if (Physics.Raycast(transform.position + Vector3.up, right, out aOutHit, 1.0f, GetWallLayerMask()))
+        if (Physics.Raycast(transform.position + Vector3.up, right, out aOutHit, 1.0f, GetWallLayerMask(), QueryTriggerInteraction.Ignore))
         {
             return true;
         }
@@ -497,7 +497,7 @@ public class PlayerStateMachine : Observer
 
     public bool RaycastFeet()
     {
-        if (Physics.Raycast(transform.position + Vector3.up * 0.1f, transform.forward, 0.5f, GetWallLayerMask()))
+        if (Physics.Raycast(transform.position + Vector3.up * 0.1f, transform.forward, 0.5f, GetWallLayerMask(), QueryTriggerInteraction.Ignore))
         {
             return true;
         }
@@ -507,7 +507,7 @@ public class PlayerStateMachine : Observer
 
     public bool RaycastHipp()
     {
-        if (Physics.Raycast(transform.position + Vector3.up, transform.forward, 0.5f, GetWallLayerMask()))
+        if (Physics.Raycast(transform.position + Vector3.up, transform.forward, 0.5f, GetWallLayerMask(), QueryTriggerInteraction.Ignore))
         {
             return true;
         }
@@ -517,7 +517,7 @@ public class PlayerStateMachine : Observer
 
     public bool RaycastHead()
     {
-        if (Physics.Raycast(transform.position + Vector3.up * 1.9f, transform.forward, 0.5f, GetWallLayerMask()))
+        if (Physics.Raycast(transform.position + Vector3.up * 1.9f, transform.forward, 0.5f, GetWallLayerMask(), QueryTriggerInteraction.Ignore))
         {
             return true;
         }
@@ -532,7 +532,7 @@ public class PlayerStateMachine : Observer
 
         Vector3 forward = myBodyTransform.forward;
 
-        if (Physics.SphereCast(transform.position + (myBodyTransform.up * 0.5f), GetCharacterController().radius * 0.15f, forward, out aOutHit, 1.0f, myWhatIsGround))
+        if (Physics.SphereCast(transform.position + (myBodyTransform.up * 0.5f), GetCharacterController().radius * 0.15f, forward, out aOutHit, 1.0f, myWhatIsGround, QueryTriggerInteraction.Ignore))
         {
             return true;
         }
@@ -543,12 +543,12 @@ public class PlayerStateMachine : Observer
     // EEE
     public bool GetEdgeHit()
     {
-        if (Physics.Raycast(transform.position + Vector3.up, Vector3.up, 1.1f, GetWallLayerMask()))
+        if (Physics.Raycast(transform.position + Vector3.up, Vector3.up, 1.1f, GetWallLayerMask(), QueryTriggerInteraction.Ignore))
         {
             return false;
         }
 
-        if (!Physics.Raycast(transform.position + Vector3.up * 2.2f, transform.forward, 1.0f, GetWallLayerMask()))
+        if (!Physics.Raycast(transform.position + Vector3.up * 2.2f, transform.forward, 1.0f, GetWallLayerMask(), QueryTriggerInteraction.Ignore))
         {
             RaycastHit hit;
 
@@ -578,7 +578,7 @@ public class PlayerStateMachine : Observer
         return RaycastForLeft(out hit) &&
                    (Vector3.Dot((transform.forward - transform.right).normalized, GetCurrentVelocityXZ().normalized) > 0.0f) &&
                    RaycastLeft(out hit) &&
-                   Physics.Raycast(transform.position + Vector3.up * 3.0f, -transform.right, 2.0f, GetWallLayerMask());
+                   Physics.Raycast(transform.position + Vector3.up * 3.0f, -transform.right, 2.0f, GetWallLayerMask(), QueryTriggerInteraction.Ignore);
     }
 
     public bool WallRunnRightTransition()
@@ -591,7 +591,7 @@ public class PlayerStateMachine : Observer
         return RaycastForRight(out hit) &&
                     (Vector3.Dot((transform.forward + transform.right).normalized, GetCurrentVelocityXZ().normalized) > 0.0f) &&
                     RaycastRight(out hit) &&
-                    Physics.Raycast(transform.position + Vector3.up * 3.0f, transform.right, 2.0f, GetWallLayerMask());
+                    Physics.Raycast(transform.position + Vector3.up * 3.0f, transform.right, 2.0f, GetWallLayerMask(), QueryTriggerInteraction.Ignore);
     }
 
     public void SetDesiredFOV(float aFOV)
@@ -637,7 +637,7 @@ public class PlayerStateMachine : Observer
         Vector3 left, right;
 
         RaycastHit hit;
-        if (Physics.Raycast(transform.position + Vector3.up * 0.2f, transform.forward, out hit, 2.0f, myWhatIsObstacle))
+        if (Physics.Raycast(transform.position + Vector3.up * 0.2f, transform.forward, out hit, 2.0f, myWhatIsObstacle, QueryTriggerInteraction.Ignore))
         {
             left = hit.transform.position + new Vector3(0.0f, hit.transform.localScale.y * 0.5f, 0.0f) - hit.transform.right * hit.transform.localScale.x * 0.5f;
             right = hit.transform.position + new Vector3(0.0f, hit.transform.localScale.y * 0.5f, 0.0f) + hit.transform.right * hit.transform.localScale.x * 0.5f;
@@ -656,7 +656,7 @@ public class PlayerStateMachine : Observer
                 vaultingDistance *= 2;
                 if (vaultingDistance.magnitude < myMaxVaultDistance)
                 {
-                    if (Physics.OverlapSphere(transform.position + vaultingDistance + Vector3.up * 0.35f, 0.3f, GetWallLayerMask()).Length == 0)
+                    if (Physics.OverlapSphere(transform.position + vaultingDistance + Vector3.up * 0.35f, 0.3f, GetWallLayerMask(), QueryTriggerInteraction.Ignore).Length == 0)
                     {
                         return true;
                     }
@@ -671,7 +671,7 @@ public class PlayerStateMachine : Observer
                 vaultingDistance *= 2;
                 if (vaultingDistance.magnitude < myMaxVaultDistance)
                 {
-                    if (Physics.OverlapSphere(transform.position + vaultingDistance + Vector3.up * 0.35f, 0.3f, GetWallLayerMask()).Length == 0)
+                    if (Physics.OverlapSphere(transform.position + vaultingDistance + Vector3.up * 0.35f, 0.3f, GetWallLayerMask(), QueryTriggerInteraction.Ignore).Length == 0)
                     {
                         return true;
                     }
@@ -710,7 +710,7 @@ public class PlayerStateMachine : Observer
     public bool GroundIsSlippy()
     {
         //return Physics.OverlapSphere(transform.position + Vector3.up * (GetCharacterController().radius - 0.2f), GetCharacterController().radius, myWhatIsSlippy).Length > 0;
-        return Physics.OverlapSphere(transform.position - Vector3.down * 0.1f, GetCharacterController().radius, myWhatIsSlippy).Length > 0;
+        return Physics.OverlapSphere(transform.position - Vector3.down * 0.1f, GetCharacterController().radius, myWhatIsSlippy, QueryTriggerInteraction.Ignore).Length > 0;
     }
 
     public void SetBodyRotationX(float aAngle)
