@@ -7,10 +7,11 @@ public class PlayerRunningState : State
     const float mySpeed = 7.5f;
     const float myBackwardSpeed = 5.0f;
     const float myAcceleration = 8.0f;
+    float myActiveTimer;
 
     public override void OnEnter()
     {
-        
+        myActiveTimer = 0.0f;
     }
 
     public override void OnExit()
@@ -20,6 +21,8 @@ public class PlayerRunningState : State
 
     public override void Tick()
     {
+        myActiveTimer += Time.deltaTime;
+
         myStateMachine.LookAround();
 
         ManageFlow();

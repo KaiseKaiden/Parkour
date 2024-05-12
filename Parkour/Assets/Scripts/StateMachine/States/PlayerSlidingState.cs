@@ -6,20 +6,27 @@ public class PlayerSlidingState : State
 {
     float myMaxSlideSpeed = 10.0f;
     float mySlopeMultiplier = 1.001f;
+    float myStartSpeed;
+    const float mySpeedBoost = 5.0f;
+    const float myLengthMarginal = 5.0f;
 
     bool myCantSlide;
 
     const float myBaseSlideLength = 7.5f;
     float mySlideLength;
     Vector3 myDesiredPosition;
-    bool myIsOnSlope = true;
-    /*
+
+    bool myIsOnSlope;
+    bool myShouldRecalculate;
+
     public override void OnEnter()
     {
         mySlideLength = myBaseSlideLength;
+        myStartSpeed = myStateMachine.GetCurrentVelocityXZ().magnitude + mySpeedBoost;
 
         myCantSlide = false;
         myIsOnSlope = false;
+        myShouldRecalculate = false;
 
         myStateMachine.SetGroundedYVelocity();
 
@@ -84,18 +91,20 @@ public class PlayerSlidingState : State
     {
         myStateMachine.ForwardLookAround();
 
-        Transitions();
         Slide();
+        Transitions();
+
+        myStateMachine.slidePos = myDesiredPosition;
     }
 
     void Slide()
     {
+        myIsOnSlope = false;
         float flowMultiplier = 1.0f;
 
         Vector3 velocity = myStateMachine.GetCurrentVelocity();
 
         Vector3 controlledVelocity = new Vector3();
-        bool slidingDown = false;
         RaycastHit hit;
         if (Physics.SphereCast(myStateMachine.transform.position + Vector3.up * 1.5f, myStateMachine.GetCharacterController().radius, Vector3.down, out hit, 2.5f, myStateMachine.GetWallLayerMask()))
         {
@@ -107,12 +116,12 @@ public class PlayerSlidingState : State
             if (slopeAngle > 1.0f)
             {
                 myIsOnSlope = true;
+                myShouldRecalculate = true;
+
                 flowMultiplier = 1.0f + (slopeAngle / 40.0f);
 
                 Vector3 slopeDirection = Vector3.Cross(Vector3.Cross(Vector3.up, hit.normal), hit.normal).normalized;
                 velocity += slopeDirection * mySlopeMultiplier * slopeAngle * Time.deltaTime;
-
-                slidingDown = true;
 
                 // Ground The Player
                 Vector3 start = myStateMachine.transform.position + Vector3.up * 1.5f;
@@ -136,16 +145,16 @@ public class PlayerSlidingState : State
             }
         }
 
-        if (myIsOnSlope)
+        if (!myIsOnSlope && myShouldRecalculate)
         {
             CalculateDesiredPosition();
-            myIsOnSlope = false;
+            myShouldRecalculate = false;
         }
 
         Vector3 directionToPoint = (myDesiredPosition - myStateMachine.transform.position).normalized;
-        if (!slidingDown)
+        if (!myIsOnSlope)
         {
-            velocity = directionToPoint * 5.0f;
+            velocity = directionToPoint * myStartSpeed;
         }
 
         velocity = Vector3.ClampMagnitude(velocity, myMaxSlideSpeed);
@@ -158,22 +167,23 @@ public class PlayerSlidingState : State
 
     void Transitions()
     {
-        Vector3 velocity = myStateMachine.GetCurrentVelocity();
-
         RaycastHit hit;
-        Physics.SphereCast(myStateMachine.transform.position + Vector3.up, myStateMachine.GetCharacterController().radius, Vector3.down, out hit, 2.0f, myStateMachine.GetWallLayerMask());
-
-        Vector3 directionToPoint = (myDesiredPosition - myStateMachine.transform.position).normalized;
-        if (Vector3.Dot(myStateMachine.transform.forward, directionToPoint) < 0.0f ||
-            (!Input.GetButton("Crouch") && !myStateMachine.GroundIsSlippy() && velocity.magnitude < 6.0f) ||
-            (velocity.magnitude < 4.0f && Vector3.Dot(hit.normal, Vector3.up) > 0.9f && !myStateMachine.GroundIsSlippy()) ||
-            (myStateMachine.RaycastSlideForward(out hit) && !myStateMachine.GroundIsSlippy()))
+        if (Physics.SphereCast(myStateMachine.transform.position + Vector3.up, myStateMachine.GetCharacterController().radius, Vector3.down, out hit, 2.0f, myStateMachine.GetWallLayerMask()))
         {
-            myStateMachine.SetSpeedLinesActive(false);
-            myStateMachine.SetDesiredFOV(90.0f);
+            RaycastHit hit2;
 
-            myStateMachine.ChangeState(PlayerStateMachine.eStates.Idle);
-            myStateMachine.SetHeight(2.0f);
+            Vector3 directionToPoint = (myDesiredPosition - myStateMachine.transform.position).normalized;
+            if ((Vector3.Dot(myStateMachine.transform.forward, directionToPoint) <= 0.5f && !myIsOnSlope) ||
+                (!Input.GetButton("Crouch") && !myStateMachine.GroundIsSlippy() /*&& TIMER?*/) ||
+                (myStateMachine.RaycastSlideForward(out hit2) && !myStateMachine.GroundIsSlippy()) ||
+                Vector3.Dot(myStateMachine.transform.forward, hit.normal) < 0.0f)
+            {
+                myStateMachine.SetSpeedLinesActive(false);
+                myStateMachine.SetDesiredFOV(90.0f);
+
+                myStateMachine.ChangeState(PlayerStateMachine.eStates.Idle);
+                myStateMachine.SetHeight(2.0f);
+            }
         }
         else if (!myStateMachine.IsGrounded() &&
             !myStateMachine.GroundIsSlippy() &&
@@ -193,23 +203,51 @@ public class PlayerSlidingState : State
         // Calculate Desired Position
         RaycastHit hit;
 
-        if (Physics.Raycast(myStateMachine.transform.position + Vector3.up * 0.5f, myStateMachine.transform.forward, out hit, mySlideLength, myStateMachine.GetWallLayerMask()))
+        if (Physics.Raycast(myStateMachine.transform.position + Vector3.up * 0.5f, myStateMachine.transform.forward, out hit, mySlideLength, myStateMachine.GetWallLayerMask(), QueryTriggerInteraction.Ignore))
         {
-            if (Physics.Raycast(hit.point - myStateMachine.transform.forward * 0.5f, Vector3.down, out hit, myStateMachine.GetWallLayerMask()))
+            if (Physics.Raycast(hit.point - myStateMachine.transform.forward * 0.5f, Vector3.down, out hit, 2.0f, myStateMachine.GetWallLayerMask(), QueryTriggerInteraction.Ignore))
             {
-                myDesiredPosition = hit.point;
+                myDesiredPosition = hit.point; // Get Position If Sliding Into Object
             }
         }
         else
         {
-            if (Physics.Raycast(myStateMachine.transform.position + Vector3.up * 0.5f + myStateMachine.transform.forward * mySlideLength, Vector3.down, out hit, myStateMachine.GetWallLayerMask()))
+            if (Physics.Raycast(myStateMachine.transform.position + Vector3.up * 0.5f + myStateMachine.transform.forward * mySlideLength, Vector3.down, out hit, 2.0f, myStateMachine.GetWallLayerMask(), QueryTriggerInteraction.Ignore))
             {
-                myDesiredPosition = hit.point;
+                if (Physics.CheckCapsule(hit.point + Vector3.up * 0.5f, hit.point + Vector3.up * 2.0f, myStateMachine.GetCharacterController().radius, myStateMachine.GetWallLayerMask(), QueryTriggerInteraction.Ignore)) // Check If Its Gonna Stop Under An Object
+                {
+
+                    if (Physics.Raycast(hit.point + Vector3.up * 0.5f + myStateMachine.transform.forward * myLengthMarginal, Vector3.up, 1.5f, myStateMachine.GetWallLayerMask(), QueryTriggerInteraction.Ignore))
+                    {
+                        // Place Player Outside Of Slide
+                        if (Physics.Raycast(myStateMachine.transform.position + Vector3.up * 2.0f, myStateMachine.transform.forward, out hit, Mathf.Infinity, myStateMachine.GetWallLayerMask(), QueryTriggerInteraction.Ignore))
+                        {
+                            if (Physics.Raycast(hit.point - myStateMachine.transform.forward * 0.5f, Vector3.down, out hit, Mathf.Infinity, myStateMachine.GetWallLayerMask(), QueryTriggerInteraction.Ignore))
+                            {
+                                myDesiredPosition = hit.point;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        myDesiredPosition = hit.point + myStateMachine.transform.forward * myLengthMarginal;
+                    }
+                }
+                else
+                {
+                    myDesiredPosition = hit.point; // Get Position On Ground
+                }
+            }
+            else
+            {
+                myDesiredPosition = myStateMachine.transform.position + myStateMachine.transform.forward * mySlideLength; // Get Position Out In Air
             }
         }
-    }*/
 
-    public override void OnEnter()
+        myDesiredPosition.y = myStateMachine.transform.position.y;
+    }
+
+    /*public override void OnEnter()
     {
         myCantSlide = false;
 
@@ -368,5 +406,5 @@ public class PlayerSlidingState : State
             myStateMachine.ChangeState(PlayerStateMachine.eStates.Idle);
             myStateMachine.SetHeight(2.0f);
         }
-    }
+    }*/
 }

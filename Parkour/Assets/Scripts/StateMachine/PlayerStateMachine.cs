@@ -226,6 +226,8 @@ public class PlayerStateMachine : Observer
         myLookRotX = 0.0f;
         myCameraTransform.localEulerAngles = Vector3.zero;
 
+        myFlow = 0.0f;
+
         myCharacterController.enabled = true;
     }
 
@@ -761,6 +763,8 @@ public class PlayerStateMachine : Observer
         return (b - b2);
     }
 
+    public Vector3 slidePos;
+
     // Todo: Use This Method For Determining Wallclimbing later
     private void OnDrawGizmos()
     {
@@ -776,5 +780,8 @@ public class PlayerStateMachine : Observer
                 Gizmos.DrawCube(new Vector3(sideHit.point.x, heightHit.point.y, sideHit.point.z), new Vector3(0.2f, 0.2f, 0.2f));
             }
         }
+
+        Gizmos.color = Color.blue;
+        Gizmos.DrawCube(slidePos, new Vector3(0.2f, 0.2f, 0.2f));
     }
 }
