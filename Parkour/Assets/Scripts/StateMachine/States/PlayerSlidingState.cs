@@ -100,7 +100,7 @@ public class PlayerSlidingState : State
     void Slide()
     {
         myIsOnSlope = false;
-        float flowMultiplier = 1.0f;
+        float flowMultiplier = 0.0f;
 
         Vector3 velocity = myStateMachine.GetCurrentVelocity();
 
@@ -118,7 +118,7 @@ public class PlayerSlidingState : State
                 myIsOnSlope = true;
                 myShouldRecalculate = true;
 
-                flowMultiplier = 1.0f + (slopeAngle / 40.0f);
+                flowMultiplier = (slopeAngle / 40.0f);
 
                 Vector3 slopeDirection = Vector3.Cross(Vector3.Cross(Vector3.up, hit.normal), hit.normal).normalized;
                 velocity += slopeDirection * mySlopeMultiplier * slopeAngle * Time.deltaTime;
