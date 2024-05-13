@@ -46,6 +46,14 @@ public class AudioManager : MonoBehaviour
 
     void Awake()
     {
+        if (GameObject.FindGameObjectsWithTag("AudioManager").Length > 1)
+        {
+            Destroy(gameObject);
+            return;
+        }
+
+        DontDestroyOnLoad(gameObject);
+
         Instance = this;
     }
 

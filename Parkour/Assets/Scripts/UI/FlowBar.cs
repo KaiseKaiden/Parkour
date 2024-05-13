@@ -32,4 +32,11 @@ public class FlowBar : MonoBehaviour
     {
         myFlow = Mathf.Clamp01(aValue01);
     }
+
+    public void SetFlowPercentageInstant(float aValue01)
+    {
+        myFlow = aValue01;
+        myVisualFlow = aValue01;
+        myFlowbar.fillAmount = aValue01;
+    }
 }

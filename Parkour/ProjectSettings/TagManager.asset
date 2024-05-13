@@ -8,6 +8,7 @@ TagManager:
   - Danger
   - EnemyBody
   - FlowBar
+  - AudioManager
   layers:
   - Default
   - TransparentFX

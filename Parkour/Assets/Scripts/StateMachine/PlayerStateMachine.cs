@@ -253,6 +253,7 @@ public class PlayerStateMachine : Observer
         myCharacterController.enabled = true;
 
         myFlowBar = GameObject.FindGameObjectWithTag("FlowBar").GetComponent<FlowBar>();
+        myFlowBar.SetFlowPercentageInstant(myFlow / myMaxFlow);
     }
 
     public void Respawn()
@@ -597,7 +598,7 @@ public class PlayerStateMachine : Observer
         {
             RaycastHit hit;
 
-            if (Physics.Raycast(transform.position + Vector3.up * 2.2f + transform.forward, Vector3.down, out hit, 1.5f, GetWallLayerMask()))
+            if (Physics.Raycast(transform.position + Vector3.up * 2.2f + transform.forward, Vector3.down, out hit, 1.5f, GetWallLayerMask(), QueryTriggerInteraction.Ignore))
             {
                 if (Vector3.Dot(hit.normal, Vector3.up) > 0.8f)
                 {
